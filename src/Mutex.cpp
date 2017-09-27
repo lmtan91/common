@@ -19,8 +19,12 @@
  *      Author: Tan.leMinh
  */
 
+#include <stdio.h>
+
+#include "Thread.h"
 #include "Mutex.h"
 
+bool Mutex::mInited;
 Mutex::Mutex( bool recursive ) :
       mLockedBy( NULL ), mName( NULL ), mRecursive( recursive ), mLockCount( 0 )
 {
@@ -75,7 +79,7 @@ int Mutex::TraceUnlock(const char *file, int line)
    // Check to see if operation not permmited
    if ( EPERM == ret ) {
       printf( "Unlock lock %s that isn't locked by current thread at %s:%d "
-            "(help by %s@%d:%d) error %d\n", mName, file, line,
+            "(help by %s@%s:%d) error %d\n", mName, file, line,
             lockedBy != NULL ? lockedBy->GetName() : "nobody", mLockFile,
             mLockLine, ret );
 
@@ -117,7 +121,7 @@ int Mutex::TraceLock( const char *file, int line )
       printf( "Lock %s already taken at %s:%d\n", mName, mLockFile, mLockLine );
    }
    else if ( ret != 0 ) {
-      printf( "Lock %s failed with error %d at %s:%d\n", mName, mLockFile,
+      printf( "Lock %s failed with error %d at %s:%d\n", mName, ret, mLockFile,
             mLockLine );
       return ret;
    }
@@ -133,17 +137,17 @@ int Mutex::TraceLock( const char *file, int line )
 
 int Mutex::Unlock()
 {
-   TraceLock( "unknown", 0 );
+   return TraceLock( "unknown", 0 );
 }
 
 int Mutex::TryLock()
 {
-   TraceTryLock( "unknown", 0 );
+   return TraceTryLock( "unknown", 0 );
 }
 
 int Mutex::Lock()
 {
-   TraceLock( "unknown", 0 );
+   return TraceLock( "unknown", 0 );
 }
 
 void Mutex::create_lock()

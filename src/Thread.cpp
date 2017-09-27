@@ -25,9 +25,13 @@
 #include <pthread.h>
 
 #include "Thread.h"
+#include "Mutex.h"
 
+bool Thread::mInited;
+pthread_key_t Thread::mThreadKey;
+pthread_mutex_t Mutex::mCriticalSection;
 
-Thread::Thread( const char *aName, int prio = 0 ) :
+Thread::Thread( const char *aName, int prio ) :
       mJoined( false ), mSystemThread( false )
 {
    strncpy( mName, aName, kThreadNameLen );
@@ -147,10 +151,11 @@ void Thread::Destroy()
 {
    mInited = false;
    Mutex::Destroy();
-   TimerManager::destroyManager();
+   //TODO
+   //TimerManager::destroyManager();
 }
 
-void Thread::Stop()
+void Thread::OnStop()
 {
    pthread_cancel( mThread );
 }
