@@ -6,13 +6,8 @@ TARGET_SHLIBS = libcommon
 
 INCDIRS += ../include
 
-#Only if masterbuild is not specified
-ifeq (,$(strip $(MASTERBUILD_BUILD_DIR)))
-
-ifneq ($(JH_GCHEAP), no)
-CFLAGS_PROG += -DGCHEAP_ENABLED
-endif
-
+ifeq ($(NO_LINT), yes)
+NO_LINT=1
 endif
 
 COMMON_SRCS = Thread.cpp Mutex.cpp
@@ -21,5 +16,4 @@ SRCS_libcommon = $(COMMON_SRCS)
 
 include $(TOPDIR)/mkbuild/Make.Defaults
 include $(TOPDIR)/mkbuild/Make.Rules
-
 

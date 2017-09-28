@@ -32,7 +32,7 @@ pthread_key_t Thread::mThreadKey;
 pthread_mutex_t Mutex::mCriticalSection;
 
 Thread::Thread( const char *aName, int prio ) :
-      mJoined( false ), mSystemThread( false )
+      mThread( 0 ), mJoined( false ), mSystemThread( false )
 {
    strncpy( mName, aName, kThreadNameLen );
    mName[ kThreadNameLen - 1 ] = '\0';
@@ -42,12 +42,12 @@ Thread::Thread( const char *aName, int prio ) :
 Thread::~Thread()
 {
    if ( !mSystemThread ) {
-      Join();
+      (void) Join();
    }
 }
 
 Thread::Thread( pthread_t aThread, const char *aName ) :
-      mJoined( false ), mSystemThread( true )
+      mThread( 0 ), mJoined( false ), mSystemThread( true )
 {
    if ( NULL == aName ) {
       snprintf( mName, kThreadNameLen, "t0x%lx", aThread );
@@ -63,7 +63,7 @@ Thread::Thread( pthread_t aThread, const char *aName ) :
 
 int32_t Thread::Start()
 {
-   int32_t ret = 0;
+   int ret;
    pthread_attr_t attrs;
 
 
