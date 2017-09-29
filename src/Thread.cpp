@@ -31,7 +31,7 @@ bool Thread::mInited;
 pthread_key_t Thread::mThreadKey;
 pthread_mutex_t Mutex::mCriticalSection;
 
-Thread::Thread( const char *aName, int prio ) :
+Thread::Thread( const char * const aName, const int prio ) :
       mThread( 0 ), mJoined( false ), mSystemThread( false )
 {
    strncpy( mName, aName, kThreadNameLen );
@@ -46,19 +46,19 @@ Thread::~Thread()
    }
 }
 
-Thread::Thread( pthread_t aThread, const char *aName ) :
+Thread::Thread( const pthread_t aThread, const char * const aName ) :
       mThread( 0 ), mJoined( false ), mSystemThread( true )
 {
    if ( NULL == aName ) {
-      snprintf( mName, kThreadNameLen, "t0x%lx", aThread );
+      (void) snprintf( mName, kThreadNameLen, "t0x%lx", aThread );
    }
    else {
       strncpy( mName, aName, kThreadNameLen );
       mName[ kThreadNameLen - 1 ] = '\0';
    }
 
-   /* Set this object with specific key */
-   pthread_setspecific( mThreadKey, this );
+   // Set this object with specific key
+   (void) pthread_setspecific( mThreadKey, this );
 }
 
 int32_t Thread::Start()
@@ -69,22 +69,27 @@ int32_t Thread::Start()
 
    printf( "creating thread %s\n", GetName() );
 
-   pthread_attr_init( &attrs );
+   ret = pthread_attr_init( &attrs );
+   if ( ret ) {
+      printf( "pthread_attr_init with error %d\n", ret );
+   }
 
    if ( mPrio > 0 && 0 == geteuid() ) {
       struct sched_param prio;
       prio.sched_priority = sched_get_priority_max( SCHED_RR );
-      pthread_attr_setschedpolicy( &attrs, SCHED_RR );
-      pthread_attr_setschedparam( &attrs, &prio );
+      (void) pthread_attr_setschedpolicy( &attrs, SCHED_RR );
+      (void) pthread_attr_setschedparam( &attrs, &prio );
    }
 
-   ret = pthread_create( &mThread, &attrs, start_thread, (void *) this );
+   ret = pthread_create( &mThread, &attrs, start_thread,
+            static_cast<void *>( this ) );
+
    if ( ret != 0 ) {
       printf( "Error from thread_create is %d\n", ret );
    }
 
-   /* Destroy attributes */
-   pthread_attr_destroy( &attrs );
+   // Destroy attributes
+   (void) pthread_attr_destroy( &attrs );
 
    return ret;
 }
@@ -113,7 +118,7 @@ int32_t Thread::Join()
    return ret;
 }
 
-bool Thread::operator ==( const Thread &t )
+bool Thread::operator ==( const Thread &t ) const
 {
    printf( "Thread::operator == Enter()\n" );
    return mThread == t.mThread;
@@ -155,25 +160,26 @@ void Thread::Destroy()
    //TimerManager::destroyManager();
 }
 
-void Thread::OnStop()
+void Thread::OnStop() const
 {
-   pthread_cancel( mThread );
+   (void) pthread_cancel( mThread );
 }
 
-void *Thread::start_thread( void *arg )
+void *Thread::start_thread( void * const arg )
 {
-   Thread *aThread = ( Thread * ) arg;
+   Thread * const aThread = reinterpret_cast<Thread *>( arg );
 
-   pthread_setspecific( mThreadKey, aThread );
+   (void) pthread_setspecific( mThreadKey, aThread );
 
-   printf( "started pid %d tid %d\n", getpid(), ( uint ) pthread_self() );
+   printf( "started pid %d tid %d\n", getpid(),
+            static_cast<uint>( pthread_self() ) );
 
-   aThread->Start();
+   (void) aThread->Start();
 
    return NULL;
 }
 
-void Thread::thread_key_destructor( void *arg )
+void Thread::thread_key_destructor( void * const arg )
 {
    Thread *t = reinterpret_cast<Thread *>( arg );
    if (t->mSystemThread) {

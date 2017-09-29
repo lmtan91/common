@@ -36,7 +36,7 @@ public:
     * @param[in] aName  Thread name.
     * @param[in] prior
     *=========================================================================*/
-   Thread( const char *aName, int prio = 0 );
+   Thread( const char * const aName, const int prio = 0 );
 
    /**=========================================================================
     * @brief Destructor
@@ -81,7 +81,7 @@ public:
     *
     *
     *=========================================================================*/
-   bool operator==( const Thread &t );
+   bool operator==( const Thread &t ) const;
 
    /**=========================================================================
     * @brief Exit current running thread
@@ -111,7 +111,7 @@ public:
     *=========================================================================*/
    static void Destroy();
 
-   static const int kThreadNameLen = 32;
+   static const unsigned long kThreadNameLen = 32;
 
 protected:
 
@@ -129,7 +129,7 @@ protected:
     *
     *
     *=========================================================================*/
-   virtual void OnStop();
+   virtual void OnStop() const;
 
 private:
 
@@ -139,7 +139,7 @@ private:
     * @param[in] aThread
     * @param[in] aName     Name of thread
     *=========================================================================*/
-   Thread( pthread_t aThread, const char *aName );
+   Thread( const pthread_t aThread, const char * const aName );
 
    /**=========================================================================
     *
@@ -154,8 +154,8 @@ private:
    static pthread_key_t mThreadKey;
    static bool mInited;
 
-   static void *start_thread( void *arg );
-   static void thread_key_destructor( void *arg );
+   static void *start_thread( void * const arg );
+   static void thread_key_destructor( void * const arg );
 };
 
 #endif /* ifndef INCLUDE_THREAD_H_ */
