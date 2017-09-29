@@ -156,7 +156,8 @@ void Mutex::create_lock()
    int type;
 
    pthread_mutexattr_t attr;
-   pthread_mutexattr_init( &attr );
+   // avoid warning ignoring return value
+   (void) pthread_mutexattr_init( &attr );
 
    if ( mRecursive ) {
       type = PTHREAD_MUTEX_RECURSIVE_NP;
@@ -164,7 +165,7 @@ void Mutex::create_lock()
    else {
       type = PTHREAD_MUTEX_ERRORCHECK_NP;
    }
-   ret = pthread_mutexattr_settype( &attr, type );
+   (void) pthread_mutexattr_settype( &attr, type );
 
    ret = pthread_mutex_init( &mMutex, &attr );
    if ( ret ) {
