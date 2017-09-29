@@ -36,6 +36,7 @@ public:
     *
     * @param[in]  recursive   Is mutex recursive
     *=========================================================================*/
+   //lint -sem(Mutex::create_lock,initializer)
    Mutex( bool recursive );
 
    /**=========================================================================
@@ -44,6 +45,7 @@ public:
     * @param[in]  name        The name of mutex
     * @param[in]  recursive   Is mutex recursive
     *=========================================================================*/
+   //lint -sem(Mutex::create_lock,initializer)
    Mutex( const char *name, bool recursive = false );
 
    /**=========================================================================
