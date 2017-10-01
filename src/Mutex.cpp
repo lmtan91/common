@@ -26,13 +26,17 @@
 
 bool Mutex::mInited;
 Mutex::Mutex( bool recursive ) :
-      mLockedBy( NULL ), mName( NULL ), mRecursive( recursive ), mLockCount( 0 )
+    mLockedBy( NULL ), mName( NULL ), mRecursive( recursive ),
+        mLockCount( 0 ),
+        mLockFile( NULL ), mLockLine( -1 )
 {
    create_lock();
 }
 
 Mutex::Mutex( const char *name, bool recursive ) :
-      mLockedBy( NULL ), mName( name ), mRecursive( recursive ), mLockCount( 0 )
+    mLockedBy( NULL ), mName( name ), mRecursive( recursive ), mLockCount( 0 ),
+        mLockFile( NULL ), mLockLine( -1 )
+
 {
    create_lock();
 }
@@ -56,7 +60,7 @@ const char *Mutex::getOwner()
    }
 }
 
-bool Mutex::isLocked()
+bool Mutex::isLocked() const
 {
    return ( mLockedBy == Thread::GetCurrent() );
 }

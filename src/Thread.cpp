@@ -174,14 +174,14 @@ void *Thread::start_thread( void * const arg )
    printf( "started pid %d tid %d\n", getpid(),
             static_cast<uint>( pthread_self() ) );
 
-   (void) aThread->Start();
+   aThread->OnStart();
 
    return NULL;
 }
 
 void Thread::thread_key_destructor( void * const arg )
 {
-   Thread *t = reinterpret_cast<Thread *>( arg );
+   Thread *t = static_cast<Thread *>( arg );
    if (t->mSystemThread) {
       delete t;
    }
