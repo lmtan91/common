@@ -21,6 +21,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 
+#ifdef __cplusplus
 /**============================================================================
  * Class description
  *
@@ -204,5 +205,12 @@ private:
    bool mStop;
    bool mHardStop;
 };
+#endif //__cplusplus
+
+__BEGIN_DECLS
+
+const char *GetThreadName();
+
+__END_DECLS
 
 #endif /* ifndef INCLUDE_THREAD_H_ */

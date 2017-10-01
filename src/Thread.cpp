@@ -26,10 +26,13 @@
 
 #include "Thread.h"
 #include "Mutex.h"
+#include "GlobalConstructor.h"
 
 bool Thread::mInited;
 pthread_key_t Thread::mThreadKey;
 pthread_mutex_t Mutex::mCriticalSection;
+
+GLOBAL_CONSTRUCT( &Thread::Init );
 
 Thread::Thread( const char * const aName, const int prio ) :
       mThread( 0 ), mJoined( false ), mSystemThread( false )
@@ -185,4 +188,13 @@ void Thread::thread_key_destructor( void * const arg )
    if (t->mSystemThread) {
       delete t;
    }
+}
+
+static const char gUnknownThread[] = "Unknown";
+const char *GetThreadName() {
+   Thread *t = Thread::GetCurrent();
+   if ( NULL == t ) {
+      return gUnknownThread;
+   }
+   return t->GetName();
 }
