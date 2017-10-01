@@ -37,6 +37,7 @@ GLOBAL_CONSTRUCT( &Thread::Init );
 Thread::Thread( const char * const aName, const int prio ) :
       mThread( 0 ), mJoined( false ), mSystemThread( false )
 {
+   printf( "Thread::Thread() Enter\n" );
    strncpy( mName, aName, kThreadNameLen );
    mName[ kThreadNameLen - 1 ] = '\0';
    mPrio = prio;
@@ -97,7 +98,7 @@ int32_t Thread::Start()
    return ret;
 }
 
-void Thread::Stop()
+void Thread::Stop() const
 {
    OnStop();
 }
@@ -190,6 +191,7 @@ void Thread::thread_key_destructor( void * const arg )
    }
 }
 
+__BEGIN_DECLS
 static const char gUnknownThread[] = "Unknown";
 const char *GetThreadName() {
    Thread *t = Thread::GetCurrent();
@@ -198,3 +200,4 @@ const char *GetThreadName() {
    }
    return t->GetName();
 }
+__END_DECLS

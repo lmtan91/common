@@ -20,6 +20,7 @@
  *****************************************************************************/
 #include <pthread.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #ifdef __cplusplus
 /**============================================================================
@@ -58,7 +59,7 @@ public:
     *
     *
     *=========================================================================*/
-   void Stop();
+   void Stop() const;
 
    /**=========================================================================
     * @brief Get name of thread
@@ -176,6 +177,7 @@ public:
          bool hard_stop = false, int prio = 0):
          Thread( name, prio ), mObject( obj ), mFunc( thread_main ),
                mStop( false ), mHardStop( hard_stop ) {
+      printf( "Runnable::Runnable() Enter\n" );
       if ( hard_stop ) {
          abort();
       }
@@ -190,7 +192,7 @@ public:
    }
 private:
    void OnStart() {
-      mObject->*mFunc();
+      ( mObject->*mFunc )();
    }
 
    void OnStop() {
