@@ -21,10 +21,34 @@
 
 #include "Thread.h"
 #include "Mutex.h"
+#include "TestCase.h"
+
+class ThreadTest: public TestCase {
+public:
+   ThreadTest() :
+         TestCase( "ThreadTest" ) {
+      SetTestName( "ThreadTest" );
+   }
+
+   virtual ~ThreadTest() {
+      printf( "ThreadTest::~ThreadTest() Enter()\n" );
+   }
+
+private:
+   void Run() {
+      for (int i = 0; i < 10; i++)
+      printf( "ThreadTest::Run() Enter()\n" );
+   }
+};
 
 int main( int argc, char* argv[] )
 {
-   Thread *a = new Thread( "kaka" );
+   ThreadTest *t = new ThreadTest();
+   printf( "ThreadTest th=%lu\n", pthread_self() );
+   t->Start();
+   printf( "ThreadTest End()\n" );
+   delete t;
+
 }
 
 

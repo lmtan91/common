@@ -37,7 +37,7 @@ GLOBAL_CONSTRUCT( &Thread::Init );
 Thread::Thread( const char * const aName, const int prio ) :
       mThread( 0 ), mJoined( false ), mSystemThread( false )
 {
-   printf( "Thread::Thread() Enter\n" );
+   printf( "Thread::Thread() Enter=%p\n", this );
    strncpy( mName, aName, kThreadNameLen );
    mName[ kThreadNameLen - 1 ] = '\0';
    mPrio = prio;
@@ -53,6 +53,7 @@ Thread::~Thread()
 Thread::Thread( const pthread_t aThread, const char * const aName ) :
       mThread( 0 ), mJoined( false ), mSystemThread( true )
 {
+   printf( "Thread::Thread2() Enter aThread=%lu\n", aThread );
    if ( NULL == aName ) {
       (void) snprintf( mName, kThreadNameLen, "t0x%lx", aThread );
    }
@@ -86,7 +87,7 @@ int32_t Thread::Start()
    }
 
    ret = pthread_create( &mThread, &attrs, start_thread,
-            static_cast<void *>( this ) );
+         static_cast<void *>( this ) );
 
    if ( ret != 0 ) {
       printf( "Error from thread_create is %d\n", ret );
@@ -106,8 +107,9 @@ void Thread::Stop() const
 int32_t Thread::Join()
 {
    int32_t ret = 0;
-
+   printf( "Thread::Join() Enter()\n" );
    if ( !mJoined ) {
+      printf( "this=%p, curr=%p\n", this, GetCurrent() );
       if (*this == *GetCurrent()) {
          printf( "thread %s attempting to join itself: DEADLOCK\n", GetName() );
          return -1;
@@ -119,6 +121,7 @@ int32_t Thread::Join()
       } else
          printf( "pthread_join(%s) failed with error %d\n", GetName(), ret );
    }
+   printf( "Thread::Join() Exit()\n" );
    return ret;
 }
 
@@ -130,13 +133,16 @@ bool Thread::operator ==( const Thread &t ) const
 
 void Thread::Exit()
 {
+   printf( "Thread::Exit() Enter()\n" );
    pthread_exit( NULL );
+   printf( "Thread::Exit() Exit()\n" );
 }
 
 Thread *Thread::GetCurrent()
 {
    Thread *t = reinterpret_cast<Thread*>( pthread_getspecific( mThreadKey ) );
    if (NULL == t) {
+      printf( "Thread::GetCurrent() NULL\n" );
       t = new Thread( pthread_self(), NULL );
    }
    return t;
@@ -171,7 +177,7 @@ void Thread::OnStop() const
 
 void *Thread::start_thread( void * const arg )
 {
-   Thread * const aThread = reinterpret_cast<Thread *>( arg );
+   Thread * const aThread = static_cast<Thread *>( arg );
 
    (void) pthread_setspecific( mThreadKey, aThread );
 
@@ -185,6 +191,7 @@ void *Thread::start_thread( void * const arg )
 
 void Thread::thread_key_destructor( void * const arg )
 {
+   printf( "Thread::thread_key_destructor Enter()\n" );
    Thread *t = static_cast<Thread *>( arg );
    if (t->mSystemThread) {
       delete t;
