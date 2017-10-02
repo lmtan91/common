@@ -26,6 +26,7 @@
  *
  *
  *============================================================================*/
+class Thread;
 class Mutex
 {
 
@@ -198,7 +199,7 @@ private:
    static pthread_mutex_t mCriticalSection;
    static bool mInited;
 
-
+   friend class Condition;
 };
 
 #endif /* ifndef INCLUDE_MUTEX_H_ */
