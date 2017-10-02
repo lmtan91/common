@@ -10,7 +10,7 @@ ifeq ($(NO_LINT), yes)
 NO_LINT=1
 endif
 
-COMMON_SRCS = Thread.cpp Mutex.cpp Condition.cpp
+COMMON_SRCS = Thread.cpp Mutex.cpp Condition.cpp EventQueue.cpp
 
 SRCS_libcommon = $(COMMON_SRCS)
 
