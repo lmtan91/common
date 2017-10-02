@@ -20,6 +20,7 @@
  */
 #include "EventQueue.h"
 #include "Mutex.h"
+#include "EventAgent.h"
 
 EventQueue::EventQueue() :
          mLock( "EventQueue" )
