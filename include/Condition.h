@@ -75,6 +75,23 @@ public:
     *=========================================================================*/
    bool Wait( Mutex &mutex, uint32_t timeoutMs );
 
+   /**=========================================================================
+    * @brief Signal the condition, waking up one and only one waiting thread.
+    * The thread to be awoke is not specified. If no thread are waiting on the
+    * Condition then do nothing.
+    *
+    * @return  void
+    *=========================================================================*/
+   void Signal();
+
+   /**=========================================================================
+    * @brief Signal the condition, waking up all waiting threads.
+    * If no thread are waiting on the Condition then do nothing.
+    *
+    * @return  void
+    *=========================================================================*/
+   void Broadcast();
+
 private:
 
    /**=========================================================================

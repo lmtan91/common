@@ -29,7 +29,7 @@
 
 Condition::Condition()
 {
-   pthread_cond_init( &mCond, NULL );
+   (void) pthread_cond_init( &mCond, NULL );
 }
 
 Condition::~Condition()
@@ -43,7 +43,7 @@ Condition::~Condition()
 }
 
 void Condition::Wait( Mutex &mutex ) {
-   Wait( mutex, 0 );
+   (void) Wait( mutex, 0 );
 }
 
 bool Condition::Wait( Mutex &mutex, uint32_t timeoutMs ) {
@@ -67,7 +67,7 @@ bool Condition::Wait( Mutex &mutex, uint32_t timeoutMs ) {
          ret = false;
       }
    } else {
-      pthread_cond_wait( &mCond, &mutex.mMutex );
+      (void) pthread_cond_wait( &mCond, &mutex.mMutex );
    }
 
    mutex.mLockedBy = lockedBy;
@@ -76,4 +76,14 @@ bool Condition::Wait( Mutex &mutex, uint32_t timeoutMs ) {
    mutex.mLockLine = lockLine;
 
    return ret;
+}
+
+void Condition::Signal()
+{
+   (void) pthread_cond_signal( &mCond );
+}
+
+void Condition::Broadcast()
+{
+   (void) pthread_cond_broadcast( &mCond );
 }
