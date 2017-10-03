@@ -192,6 +192,56 @@ protected:
 template<typename ReturnType>
 class SyncRetEventAgent: protected EventAgent {
 public:
-   Syn
+   SyncRetEventAgent() :
+            EventAgent()
+   {
+   }
+
+   typedef ReturnType& NoReferenceReturn;
+
+   using EventAgent::AddRef;
+   using EventAgent::Release;
+
+   ReturnType send( IEventDispatcher *dispatcher )
+   {
+      // The SyncRetEventAgent needs to make sure that after it
+      // is dispatched and delivered the agent remains valid until
+      // we are ready to return the value we filled in in the deliver
+      // method.   In this case though we are going to use the
+      // SmartPtr<> template and C++ scoping to do the AddRef and
+      // Release so that we can return mRetValue directly without
+      // making an explicit copy on the stack.
+
+      // This is necessary because as soon as the dispatcher->sendEventSync
+      // returns the only gauranteed reference to "this" object is the
+      // one that is taken in this method.   Once we release that reference
+      // "this" is possibly invalid and should not be accessed by again
+      // before the method returns.
+
+      SmartPtr<EventAgent> holdMe = this;
+
+      if ( dispatcher->isThreadCurrent() ) {
+         deliver();
+      } else {
+         dispatcher->sendEventSync( this );
+      }
+
+      // Return the filled in return value.   This will make
+      // an appropriate copy of mRetValue before the SmartPtr<>
+      // falls out of scope and releases this object.
+      return mRetValue;
+   }
+
+protected:
+   virtual ~SyncRetEventAgent()
+   {
+   }
+   ReturnType mRetValue;
 };
+
+// Include the template definitions
+#ifndef DOXYGEN_SHOULD_IGNORE_THIS
+#include "EventAgentT.h"
+#endif
+
 #endif /* ifndef INCLUDE_EVENTAGENT_H_ */

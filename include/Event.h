@@ -210,7 +210,7 @@ public:
     * @param   event_id
     * @return  bool
     *=========================================================================*/
-   virtual bool addEventListener( IEventListener *listener, int event_id ) = 0;
+   virtual int addEventListener( IEventListener *listener, int event_id ) = 0;
 
    /**=========================================================================
     * @brief Remove this event listener for the event_id.
@@ -219,7 +219,7 @@ public:
     * @param   event_id
     * @return  bool
     *=========================================================================*/
-   virtual bool removeEventListener( IEventListener *listener,
+   virtual int removeEventListener( IEventListener *listener,
          int event_id ) = 0;
 
 protected:
@@ -234,5 +234,14 @@ protected:
 };
 
 #define SMART_CASTABLE( id ) static int GetEventId() { return id; }
+
+template<class T>
+T *event_cast( Event *ev )
+{
+   if ( ev->getEventId() == T::GetEventId() )
+      return static_cast<T*>( ev );
+   else
+      return NULL;
+}
 
 #endif /* ifndef INCLUDE_EVENT_H_ */
