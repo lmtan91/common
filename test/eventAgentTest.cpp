@@ -441,12 +441,12 @@ public:
                            p3, ccg1, p4, p5, p6 );
          result = agent->send( &mEventThread );
          printf(
-                  "RetVal(%d) p1(%llu) p2(%u) p3(%u) ccg1(%d) p4(%u) p5(%lld) p6(%d)",
+                  "RetVal(%d) p1(%lu) p2(%u) p3(%u) ccg1(%d) p4(%u) p5(%ld) p6(%d)\n",
                   result, p1, p2, p3, ccg1.getCount(), p4, p5, p6 );
          return result;
       }
 
-      printf( "Received p1(%llu) p2(%u) p3(%u) ccg1(%d) p4(%u) p5(%lld) p6(%d)",
+      printf( "Received p1(%lu) p2(%u) p3(%u) ccg1(%d) p4(%u) p5(%ld) p6(%d)\n",
                p1, p2, p3, ccg1.getCount(), p4, p5, p6 );
       p1 += 1024;
       p2 += 512;
@@ -471,13 +471,13 @@ public:
                            p1, p2, p3, ccg1, p4, p5, p6, p7 );
          result = agent->send( &mEventThread );
          printf(
-                  "RetVal(%d) p1(%llu) p2(%u) p3(%u) ccg1(%d) p4(%u) p5(%lld) p6(%d) p7(%d)",
+                  "RetVal(%d) p1(%lu) p2(%u) p3(%u) ccg1(%d) p4(%u) p5(%ld) p6(%d) p7(%d)\n",
                   result, p1, p2, p3, ccg1.getCount(), p4, p5, p6, p7 );
          return result;
       }
 
       printf(
-               "Received p1(%llu) p2(%u) p3(%u) ccg1(%d) p4(%u) p5(%lld) p6(%d) p7(%d)",
+               "Received p1(%lu) p2(%u) p3(%u) ccg1(%d) p4(%u) p5(%ld) p6(%d) p7(%d)\n",
                p1, p2, p3, ccg1.getCount(), p4, p5, p6, p7 );
       p1 += 1024;
       p2 += 512;
@@ -504,13 +504,13 @@ public:
                   p8 );
          result = agent->send( &mEventThread );
          printf(
-                  "RetVal(%d) p1(%llu) p2(%u) p3(%u) ccg1(%d) p4(%u) p5(%lld) p6(%d) p7(%d) p8(%d)",
+                  "RetVal(%d) p1(%lu) p2(%u) p3(%u) ccg1(%d) p4(%u) p5(%ld) p6(%d) p7(%d) p8(%d)\n",
                   result, p1, p2, p3, ccg1.getCount(), p4, p5, p6, p7, p8 );
          return result;
       }
 
       printf(
-               "Received p1(%llu) p2(%u) p3(%u) ccg1(%d) p4(%u) p5(%lld) p6(%d) p7(%d) p8(%d)",
+               "Received p1(%lu) p2(%u) p3(%u) ccg1(%d) p4(%u) p5(%ld) p6(%d) p7(%d) p8(%d)\n",
                p1, p2, p3, ccg1.getCount(), p4, p5, p6, p7, p8 );
       p1 += 1024;
       p2 += 512;
@@ -538,13 +538,13 @@ public:
                   p8, p9 );
          result = agent->send( &mEventThread );
          printf(
-                  "RetVal(%d) p1(%llu) p2(%u) p3(%u) ccg1(%d) p4(%u) p5(%lld) p6(%d) p7(%d) p8(%d) p9(%d)",
+                  "RetVal(%d) p1(%lu) p2(%u) p3(%u) ccg1(%d) p4(%u) p5(%ld) p6(%d) p7(%d) p8(%d) p9(%d)\n",
                   result, p1, p2, p3, ccg1.getCount(), p4, p5, p6, p7, p8, p9 );
          return result;
       }
 
       printf(
-               "Received p1(%llu) p2(%u) p3(%u) ccg1(%d) p4(%u) p5(%lld) p6(%d) p7(%d) p8(%d) p9(%d)",
+               "Received p1(%lu) p2(%u) p3(%u) ccg1(%d) p4(%u) p5(%ld) p6(%d) p7(%d) p8(%d) p9(%d)\n",
                p1, p2, p3, ccg1.getCount(), p4, p5, p6, p7, p8, p9 );
       p1 += 1024;
       p2 += 512;
@@ -562,81 +562,84 @@ protected:
    bool mTheBool;
    void handleAsyncFunc0()
    {
-      printf( "Received Async0" );
+      printf( "Received Async0\n" );
    }
    void handleAsyncFunc1( uint32_t p1 )
    {
-      printf( "Received Async1 %u", p1 );
+      printf( "Received Async1 %u\n", p1 );
    }
    void handleAsyncFunc2( uint32_t p1, int16_t p2 )
    {
-      printf( "Received Async2 %u, %d", p1, p2 );
+      printf( "Received Async2 %u, %d\n", p1, p2 );
    }
    void handleAsyncFunc3( uint32_t p1, int16_t p2, TestClass *p3 )
    {
-      printf( "Received Async3 %u, %d, %p", p1, p2, p3 );
+      printf( "Received Async3 %u, %d, %p\n", p1, p2, p3 );
    }
    void handleAsyncFunc4( uint32_t p1, int16_t p2, TestClass *p3, char *p4 )
    {
-      printf( "Received Async4 %u, %d, %p, %s", p1, p2, p3, p4 );
+      printf( "Received Async4 %u, %d, %p, %s\n", p1, p2, p3, p4 );
    }
    void handleAsyncFunc5( uint32_t p1, int16_t p2, TestClass *p3, char *p4,
             int p5 )
    {
-      printf( "Received Async5 %u, %d, %p, %s, %d", p1, p2, p3, p4, p5 );
+      printf( "Received Async5 %u, %d, %p, %s, %d\n", p1, p2, p3, p4, p5 );
    }
    void handleAsyncFunc6( uint32_t p1, int16_t p2, TestClass *p3, char *p4,
             int p5, bool p6 )
    {
-      printf( "Received Async6 %u, %d, %p, %s, %d, %d", p1, p2, p3, p4, p5,
+      printf( "Received Async6 %u, %d, %p, %s, %d, %d\n", p1, p2, p3, p4, p5,
                p6 );
    }
    void handleAsyncFunc7( uint32_t p1, int16_t p2, TestClass *p3, char *p4,
             int p5, bool p6, char p7 )
    {
-      printf( "Received Async7 %u, %d, %p, %s, %d, %d, %c", p1, p2, p3, p4, p5,
+      printf( "Received Async7 %u, %d, %p, %s, %d, %d, %c\n", p1, p2, p3, p4,
+               p5,
                p6, p7 );
    }
    void handleAsyncFunc8( uint32_t p1, int16_t p2, TestClass *p3, char *p4,
             int p5, bool p6, char p7, uint8_t p8 )
    {
-      printf( "Received Async8 %u, %d, %p, %s, %d, %d, %c, %d", p1, p2, p3, p4,
+      printf( "Received Async8 %u, %d, %p, %s, %d, %d, %c, %d\n", p1, p2, p3,
+               p4,
                p5, p6, p7, p8 );
    }
    void handleAsyncFunc9( uint32_t p1, int16_t p2, TestClass *p3, char *p4,
             int p5, bool p6, char p7, uint8_t p8, uint16_t p9 )
    {
-      printf( "Received Async9 %u, %d, %p, %s, %d, %d, %c, %d, %d", p1, p2, p3,
+      printf( "Received Async9 %u, %d, %p, %s, %d, %d, %c, %d, %d\n", p1, p2,
+               p3,
                p4, p5, p6, p7, p8, p9 );
    }
    void handleAsyncFunc10( uint32_t p1, int16_t p2, TestClass *p3, char *p4,
             int p5, bool p6, char p7, uint8_t p8, uint16_t p9, uint64_t p10 )
    {
-      printf( "Received Async10 %u, %d, %p, %s, %d, %d, %c, %d, %d, %llu", p1,
+      printf( "Received Async10 %u, %d, %p, %s, %d, %d, %c, %d, %d, %lu\n", p1,
                p2, p3, p4, p5, p6, p7, p8, p9, p10 );
    }
 
    void handleSyncFunc0()
    {
-      printf( "Received Sync0" );
+      printf( "Received Sync0\n" );
    }
 
    void handleSyncFunc1( uint64_t &p1 )
    {
-      printf( "Received Sync1, %llu", p1 );
+      printf( "Received Sync1, %lu\n", p1 );
       p1 += 1024;
    }
 
    void handleSyncFunc2( uint64_t &p1, uint32_t &p2 )
    {
-      printf( "Received Sync2, %llu, %u", p1, p2 );
+      printf( "Received Sync2, %lu, %u\n", p1, p2 );
       p1 += 1024;
       p2 += 512;
    }
 
    void handleSyncFunc3( uint64_t &p1, uint32_t &p2, uint16_t &p3 )
    {
-      printf( "Received Sync3, %llu, %u, %u", p1, p2, p3 );
+      printf( "Received Sync3, %lu, %u, %u\n", p1, p2, p3 );
       p1 += 1024;
       p2 += 512;
       p3 += 256;
@@ -644,7 +647,7 @@ protected:
 
    void handleSyncFunc4( uint64_t &p1, uint32_t &p2, uint16_t &p3, uint8_t &p4 )
    {
-      printf( "Received Sync4, %llu, %u, %u, %u", p1, p2, p3, p4 );
+      printf( "Received Sync4, %lu, %u, %u, %u\n", p1, p2, p3, p4 );
       p1 += 1024;
       p2 += 512;
       p3 += 256;
@@ -654,7 +657,7 @@ protected:
    void handleSyncFunc5( uint64_t &p1, uint32_t &p2, uint16_t &p3, uint8_t &p4,
             int64_t &p5 )
    {
-      printf( "Received Sync5, %llu, %u, %u, %u, %lld", p1, p2, p3, p4, p5 );
+      printf( "Received Sync5, %lu, %u, %u, %u, %ld\n", p1, p2, p3, p4, p5 );
       p1 += 1024;
       p2 += 512;
       p3 += 256;
@@ -665,7 +668,8 @@ protected:
    void handleSyncFunc6( uint64_t &p1, uint32_t &p2, uint16_t &p3, uint8_t &p4,
             int64_t &p5, int32_t &p6 )
    {
-      printf( "Received Sync6, %llu, %u, %u, %u, %lld, %d", p1, p2, p3, p4, p5,
+      printf( "Received Sync6, %lu, %u, %u, %u, %ld, %d\n", p1, p2, p3, p4,
+               p5,
                p6 );
       p1 += 1024;
       p2 += 512;
@@ -678,7 +682,8 @@ protected:
    void handleSyncFunc7( uint64_t &p1, uint32_t &p2, uint16_t &p3, uint8_t &p4,
             int64_t &p5, int32_t &p6, int16_t &p7 )
    {
-      printf( "Received Sync7, %llu, %u, %u, %u, %lld, %d, %d", p1, p2, p3, p4,
+      printf( "Received Sync7, %lu, %u, %u, %u, %ld, %d, %d\n", p1, p2, p3,
+               p4,
                p5, p6, p7 );
       p1 += 1024;
       p2 += 512;
@@ -692,7 +697,8 @@ protected:
    void handleSyncFunc8( uint64_t &p1, uint32_t &p2, uint16_t &p3, uint8_t &p4,
             int64_t &p5, int32_t &p6, int16_t &p7, int8_t &p8 )
    {
-      printf( "Received Sync8, %llu, %u, %u, %u, %lld, %d, %d, %d", p1, p2, p3,
+      printf( "Received Sync8, %lu, %u, %u, %u, %ld, %d, %d, %d\n", p1, p2,
+               p3,
                p4, p5, p6, p7, p8 );
       p1 += 1024;
       p2 += 512;
@@ -707,7 +713,8 @@ protected:
    void handleSyncFunc9( uint64_t &p1, uint32_t &p2, uint16_t &p3, uint8_t &p4,
             int64_t &p5, int32_t &p6, int16_t &p7, int8_t &p8, bool &p9 )
    {
-      printf( "Received Sync9, %llu, %u, %u, %u, %lld, %d, %d, %d, %d", p1, p2,
+      printf( "Received Sync9, %lu, %u, %u, %u, %ld, %d, %d, %d, %d\n", p1,
+               p2,
                p3, p4, p5, p6, p7, p8, p9 );
       p1 += 1024;
       p2 += 512;
@@ -724,7 +731,8 @@ protected:
             int64_t &p5, int32_t &p6, int16_t &p7, int8_t &p8, bool &p9,
             char &p10 )
    {
-      printf( "Received Sync10, %llu, %u, %u, %u, %lld, %d, %d, %d, %d, %c", p1,
+      printf( "Received Sync10, %lu, %u, %u, %u, %ld, %d, %d, %d, %d, %c\n",
+               p1,
                p2, p3, p4, p5, p6, p7, p8, p9, p10 );
       p1 += 1024;
       p2 += 512;
@@ -749,7 +757,7 @@ void runAsyncTests()
    uint32_t p1 = 102910;
    int16_t p2 = -42;
    TestClass *p3 = &app;
-   char *p4 = "Hello World";
+   char * p4 = (char *) "Hello World\n";
    int p5 = -2910;
    bool p6 = true;
    char p7 = 'a';
@@ -769,7 +777,7 @@ void runAsyncTests()
    app.AsyncFunc9( p1, p2, p3, p4, p5, p6, p7, p8, p9 );
    app.AsyncFunc10( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10 );
    sleep( 2 );
-   printf( "Async Tests complete!" );
+   printf( "Async Tests complete!\n" );
 }
 
 void runSyncTests()
@@ -798,7 +806,7 @@ void runSyncTests()
    app.SyncFunc8( p1, p2, p3, p4, p5, p6, p7, p8 );
    app.SyncFunc9( p1, p2, p3, p4, p5, p6, p7, p8, p9 );
    app.SyncFunc10( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10 );
-   printf( "Sync Tests complete!" );
+   printf( "Sync Tests complete!\n" );
 }
 
 void runSyncRetTests()
@@ -824,20 +832,20 @@ void runSyncRetTests()
    app.SyncRetFunc3( p1, p2, p3 );
    app.SyncRetFunc4( p1, p2, p3, ccg1 );
    returnCCG = app.SyncRetFunc5( p1, p2, p3, ccg1, p4 );
-   printf( "Total copies after SyncRetFunc5(%d)", returnCCG.getCount() );
+   printf( "Total copies after SyncRetFunc5(%d)\n", returnCCG.getCount() );
    app.SyncRetFunc6( p1, p2, p3, ccg1, p4, p5 );
    app.SyncRetFunc7( p1, p2, p3, ccg1, p4, p5, p6 );
    app.SyncRetFunc8( p1, p2, p3, ccg1, p4, p5, p6, p7 );
    app.SyncRetFunc9( p1, p2, p3, ccg1, p4, p5, p6, p7, p8 );
    app.SyncRetFunc10( p1, p2, p3, ccg1, p4, p5, p6, p7, p8, p9 );
 
-   printf( "SyncRet tests complete!" );
+   printf( "SyncRet tests complete!\n" );
 }
 
 int main( int argc, char *argv[] )
 {
    runAsyncTests();
-   runSyncTests();
-   runSyncRetTests();
+   //runSyncTests();
+   //runSyncRetTests();
 }
 
