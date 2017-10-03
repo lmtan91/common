@@ -37,6 +37,7 @@ public:
    TestClass() :
             mTheBool( false )
    {
+      printf( "TestClass()\n" );
    }
    ~TestClass()
    {
@@ -765,6 +766,7 @@ void runAsyncTests()
    uint16_t p9 = (uint16_t) -1;
    uint64_t p10 = (uint64_t) -1;
 
+   printf( "BEFIRE call Async\n" );
    app.AsyncFunc0();
    app.AsyncFunc1( p1 );
    app.AsyncFunc2( p1, p2 );

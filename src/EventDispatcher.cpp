@@ -117,6 +117,7 @@ int EventDispatcherHelper::removeEventListener( IEventListener *listener,
 
 EventDispatcher::EventDispatcher()
 {
+   printf( "EventDispatcher::EventDispatcher()\n" );
    // NOTE:  This is a sort of hacky way of preventing a bad condition from
    // occuring.  It was found that when we are processing a signal to do
    // a shutdown (ie.  ctrl-c in tad) the creation of the thread in the

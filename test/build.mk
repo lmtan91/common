@@ -3,7 +3,7 @@ LOADED_uconnect/src/build.mk := 1
 
 DIR := common/include
 
-TARGET_PROGS = threadTest
+TARGET_PROGS = threadTest eventAgentTest
 
 INCDIRS_$(DIR) := $(TOPSRCDIR)/$(DIR) $(TOPSRCDIR)/$(DIR)/pubinc
 
@@ -14,6 +14,9 @@ $(DIR)_SERVERTEST = servertest.cpp
 
 SRCS_threadTest := $($(DIR)_THREAD_TEST_SRCS)
 LDFLAGS_threadTest = -lcommon
+
+SRCS_eventAgentTest := eventAgentTest.cpp
+LDFLAGS_eventAgentTest = -lcommon
 
 SRCS_appstarter := $($(DIR)_APPSTARTER)
 LDFLAGS_appstarter = -luconnect
