@@ -62,6 +62,15 @@ void EventQueue::SendEvent( Event *ev )
    mWait.Signal();
 }
 
+/**============================================================================
+ * @brief Wait for an event to arrive. User MUST call release on Event when
+ * done with it.
+ *
+ * @param[in]     timeoutms    Number of miniseconds to wait before timeout.
+ * If 0, wait forever.
+ *
+ * @return        Event
+ *============================================================================*/
 Event *EventQueue::WaitEvent( uint32_t timeoutms )
 {
    DebugAutoLock( mLock );

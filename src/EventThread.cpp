@@ -26,7 +26,8 @@ EventThread::EventThread( const char *name ) :
          mThread( name == NULL ? "EventThread" : name, this,
                   &EventThread::threadMain )
 {
-   mThread.Start();
+   // Ignore return value.
+   (void) mThread.Start();
 }
 
 EventThread::~EventThread()
@@ -34,7 +35,8 @@ EventThread::~EventThread()
    EventDispatcher::sendEvent(
             new Event( Event::kShutdownEventId, PRIORITY_HIGH ) );
    printf( "Wait for thread to die\n" );
-   mThread.Join();
+   // Ignore return value.
+   (void) mThread.Join();
 }
 
 void EventThread::threadMain()
