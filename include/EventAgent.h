@@ -188,4 +188,10 @@ protected:
    virtual ~SyncEventAgent() {
    }
 };
+
+template<typename ReturnType>
+class SyncRetEventAgent: protected EventAgent {
+public:
+   Syn
+};
 #endif /* ifndef INCLUDE_EVENTAGENT_H_ */

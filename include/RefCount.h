@@ -20,6 +20,10 @@
  *****************************************************************************/
 #include "Mutex.h"
 
+enum ErrorCode {
+   kNoError, kNoInterface, kNoClass, kNoFactory, kLoadFailed
+};
+
 /**============================================================================
  * Class description
  *
