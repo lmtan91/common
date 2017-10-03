@@ -42,7 +42,7 @@ public:
     *
     * @param[in]  recursive   Is mutex recursive
     *=========================================================================*/
-   Mutex( bool recursive );
+   Mutex( bool recursive = false );
 
    /**=========================================================================
     * @brief Constructor
