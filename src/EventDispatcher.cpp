@@ -20,7 +20,6 @@
  */
 #include <iostream>
 #include "EventDispatcher.h"
-#include "EventAgent.h"
 #include "Timer.h"
 
 using namespace std;
@@ -297,7 +296,8 @@ bool EventDispatcher::handleEvent( Event *ev )
    switch (ev->getEventId()) {
    case Event::kShutdownEventId:
       cout << "kShutdownEventId recieved" << endl;
-      removeAll();
+      // ignore return value
+      (void) removeAll();
       done = true;
       ev->Release();
       break;
