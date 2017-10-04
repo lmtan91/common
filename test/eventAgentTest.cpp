@@ -5,7 +5,8 @@
 #include "EventAgent.h"
 #include "EventThread.h"
 
-
+class TestClass;
+typedef AsyncEventAgent0<TestClass> SendAsyncEventAgent0;
 class TestClass {
 public:
    TestClass() :
@@ -19,7 +20,7 @@ public:
 
    void AsyncFunc0()
    {
-      AsyncEventAgent0<TestClass> *agent = new AsyncEventAgent0<TestClass>(
+      SendAsyncEventAgent0 *agent = new SendAsyncEventAgent0(
                this, &TestClass::handleAsyncFunc0 );
       agent->send( &mEventThread );
    }
