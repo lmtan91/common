@@ -134,7 +134,8 @@ void EventQueue::RemoveAgentsByReceiver( void *receiver )
    for (std::list<Event*>::iterator i = mQueue.begin(); i != mQueue.end();
             ++i) {
       if ( ( *i )->getEventId() == Event::kAgentEventId ) {
-         EventAgent* agent = static_cast<EventAgent*>( *i );
+         // dynamic_cast to downcast polymorphic type
+         EventAgent* agent = dynamic_cast<EventAgent*>( *i );
          if ( agent->getDeliveryTarget() == receiver ) {
             ( *i )->Release();
             i = mQueue.erase( i );

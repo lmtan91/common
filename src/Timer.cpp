@@ -97,7 +97,7 @@ void TimerManager::clockHandler()
             }
          }
       } else {
-         std::cout << "Signal recieved on timer condition????\n";
+         std::cout << "Signal recieved on timer condition?\n";
       }
    }
 }
@@ -268,7 +268,8 @@ void TimerManager::removeAgentsByReceiver( void* receiver,
                && timer.mEvent->getEventId() == Event::kAgentEventId
                && timer.mDispatcher == dispatcher ) {
          std::cout << "Found an event agent, looking more closely" << std::endl;
-         EventAgent* agent = static_cast<EventAgent*>( (Event*) timer.mEvent );
+         // dynamic_cast to downcast polymorphic type
+         EventAgent* agent = dynamic_cast<EventAgent*>( (Event*) timer.mEvent );
          if ( agent->getDeliveryTarget() == receiver ) {
             std::cout << "Found a match, removing" << std::endl;
             //TODO check if correct.
