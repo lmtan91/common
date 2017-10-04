@@ -97,6 +97,7 @@ public:
     *=========================================================================*/
    AsyncEventAgent() :
          EventAgent() {
+      std::cout << "AsyncEventAgent()\n";
    }
 
    using EventAgent::AddRef;

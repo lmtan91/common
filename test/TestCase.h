@@ -1,5 +1,5 @@
-#ifndef JH_TEST_CASE_H_
-#define JH_TEST_CASE_H_
+#ifndef _TEST_CASE_H_
+#define _TEST_CASE_H_
 
 #include <string>
 //#include <stdlib.h>
@@ -90,5 +90,5 @@ private:
 };
 
 
-#endif // JH_TEST_CASE_H_
+#endif // _TEST_CASE_H_
 
