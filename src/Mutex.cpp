@@ -24,7 +24,8 @@
 #include "Thread.h"
 #include "Mutex.h"
 
-bool Mutex::mInited;
+bool Mutex::mInited = false;
+
 Mutex::Mutex( bool recursive ) :
     mLockedBy( NULL ), mName( NULL ), mRecursive( recursive ),
         mLockCount( 0 ),
@@ -141,7 +142,7 @@ int Mutex::TraceLock( const char *file, int line )
 
 int Mutex::Unlock()
 {
-   return TraceLock( "unknown", 0 );
+   return TraceUnlock( "unknown", 0 );
 }
 
 int Mutex::TryLock()
