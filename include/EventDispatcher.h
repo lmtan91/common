@@ -115,8 +115,8 @@ public:
    bool isThreadCurrent();
 
    /**=========================================================================
-    * add an event listener to be called when event_id is recieved, if event_id
-    *  is kInvalidEventId then all events recieved will be sent to the listener.
+    * add an event listener to be called when event_id is received, if event_id
+    *  is kInvalidEventId then all events received will be sent to the listener.
     *=========================================================================*/
    int addEventListener( IEventListener *listener, int event_id );
 
