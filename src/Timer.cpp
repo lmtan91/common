@@ -39,14 +39,16 @@ TimerManager::TimerManager() :
 
    mClockThread = new
    Runnable<TimerManager>( "clockThread", this, &TimerManager::clockHandler );
-   mClockThread->Start();
+   // ignore return value
+   (void) mClockThread->Start();
 }
 
 TimerManager::~TimerManager()
 {
 
    mClockThread->Stop();
-   mClockThread->Join();
+   // ignore return value
+   (void) mClockThread->Join();
 
    delete mClockThread;
 }
@@ -270,7 +272,7 @@ void TimerManager::removeAgentsByReceiver( void* receiver,
          std::cout << "Found an event agent, looking more closely" << std::endl;
          // dynamic_cast to downcast polymorphic type
          EventAgent* agent = dynamic_cast<EventAgent*>( (Event*) timer.mEvent );
-         if ( agent->getDeliveryTarget() == receiver ) {
+         if ( agent != NULL && agent->getDeliveryTarget() == receiver ) {
             std::cout << "Found a match, removing" << std::endl;
             //TODO check if correct.
             i = mList.erase( i );
@@ -326,7 +328,7 @@ void TimerManager::addTimerNode( const TimerNode& newTimer )
       if ( diff < 0 ) {
          //TODO check if correct.
          //i.insertBefore( newTimer );
-         mList.insert( i, newTimer );
+         (void) mList.insert( i, newTimer );
          inserted = true;
          break;
       }
