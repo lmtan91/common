@@ -133,6 +133,12 @@ EventDispatcher::~EventDispatcher()
 {
 }
 
+/**============================================================================
+ * @brief Send a event to the queue, then wait for a signal from the
+ * receiving thread to wake up.
+ *
+ * @param   ev    Event to be sent.
+ *============================================================================*/
 void EventDispatcher::sendEventSync( Event *ev )
 {
    // event ref count handled by holder.
@@ -148,11 +154,19 @@ void EventDispatcher::sendEventSync( Event *ev )
    }
 
    mSyncLock.Lock();
-   while ( holder.mDone == false )
+   while ( holder.mDone == false ) {
+      // Wait will unlock mSyncLock before going to sleep.
+      // After being signaled it will relock before wakeup.
       mSyncWait.Wait( mSyncLock );
+   }
    mSyncLock.Unlock();
 }
 
+/**============================================================================
+ * @brief Send a event to the queue.
+ *
+ * @param ev      Event will be sent.
+ *============================================================================*/
 void EventDispatcher::sendEvent( Event *ev )
 {
    mQueue.SendEvent( ev );

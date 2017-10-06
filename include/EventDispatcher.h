@@ -61,17 +61,22 @@ public:
    virtual ~EventDispatcher();
 
    /**=========================================================================
-    * Send a event to the queue.
+    * @brief Send a event to the queue, then wait for a signal from the
+    * receiving thread to wake up.
+    *
+    * @param   ev    Event to be sent.
     *=========================================================================*/
    void sendEventSync( Event *ev );
 
    /**=========================================================================
-    * Send a event to the queue.
-    */
+    * @brief Send a event to the queue.
+    *
+    * @param ev      Event will be sent.
+    *=========================================================================*/
    void sendEvent( Event *ev );
 
    /**=========================================================================
-    * Send a event at a later time.
+    * @brief Send a event at a later time.
     *=========================================================================*/
    void sendTimedEvent( Event *ev, uint32_t msecs );
 

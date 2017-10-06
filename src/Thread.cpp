@@ -37,7 +37,7 @@ GLOBAL_CONSTRUCT( &Thread::Init );
 Thread::Thread( const char * const aName, const int prio ) :
       mThread( 0 ), mJoined( false ), mSystemThread( false )
 {
-   printf( "Thread::Thread() Enter=%p\n", this );
+//   printf( "Thread::Thread() Enter=%p\n", this );
    strncpy( mName, aName, kThreadNameLen );
    mName[ kThreadNameLen - 1 ] = '\0';
    mPrio = prio;
@@ -53,7 +53,7 @@ Thread::~Thread()
 Thread::Thread( const pthread_t aThread, const char * const aName ) :
       mThread( 0 ), mJoined( false ), mSystemThread( true )
 {
-   printf( "Thread::Thread2() Enter aThread=%lu\n", aThread );
+//   printf( "Thread::Thread2() Enter aThread=%lu\n", aThread );
    if ( NULL == aName ) {
       (void) snprintf( mName, kThreadNameLen, "t0x%lx", aThread );
    }
@@ -150,7 +150,7 @@ Thread *Thread::GetCurrent()
 
 void Thread::Init()
 {
-   printf( "Thread::Init() Enter\n" );
+//   printf( "Thread::Init() Enter\n" );
    if (!mInited) {
       if (pthread_key_create( &mThreadKey, &thread_key_destructor ) != 0) {
          printf( "Failed to create thread key\n" );
@@ -167,7 +167,7 @@ void Thread::Destroy()
    mInited = false;
    Mutex::Destroy();
    //TODO
-   //TimerManager::destroyManager();
+//   TimerManager::destroyManager();
 }
 
 void Thread::OnStop() const

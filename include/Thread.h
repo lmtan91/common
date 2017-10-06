@@ -177,7 +177,6 @@ public:
          bool hard_stop = false, int prio = 0):
          Thread( name, prio ), mObject( obj ), mFunc( thread_main ),
                mStop( false ), mHardStop( hard_stop ) {
-      printf( "Runnable::Runnable() Enter=%p\n", this );
       if ( hard_stop ) {
          abort();
       }
