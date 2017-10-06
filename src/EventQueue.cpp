@@ -19,7 +19,6 @@
  *      Author: lia1hc
  */
 #include "EventQueue.h"
-#include "Mutex.h"
 #include "EventAgent.h"
 
 EventQueue::EventQueue() :

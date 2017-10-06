@@ -19,9 +19,9 @@
  *      Author: lia1hc
  */
 
-/* Standard */
+// Standard
 #include <stdio.h>
-/* Common */
+// Common
 #include "Condition.h"
 #include "Mutex.h"
 #include "Thread.h"
