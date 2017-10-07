@@ -247,7 +247,6 @@ void TimerManager::removeTimedEvent( Event *ev )
       // Check if the timer node has an event for the dispatcher
       // specified
       if ( (Event*) timer.mEvent == ev ) {
-         //TODO check if correct.
          node = mList.erase( node );
          continue;
       }
@@ -274,7 +273,6 @@ void TimerManager::removeAgentsByReceiver( void* receiver,
          EventAgent* agent = dynamic_cast<EventAgent*>( (Event*) timer.mEvent );
          if ( agent != NULL && agent->getDeliveryTarget() == receiver ) {
             std::cout << "Found a match, removing" << std::endl;
-            //TODO check if correct.
             i = mList.erase( i );
             continue;
          }
