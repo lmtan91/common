@@ -149,7 +149,7 @@ void TimerManager::handleTick()
 
       // We need to re-send it in a few ticks
       if ( timer.mRepeatMS != 0 ) {
-         unsigned newTicks = ( timer.mRepeatMS + kMsPerTick - 1
+         unsigned newTicks = ( timer.mRepeatMS + ( kMsPerTick - 1 )
                   - timer.mRemainingMS ) / kMsPerTick;
          timer.mTick += newTicks;
          timer.mRemainingMS = ( timer.mRepeatMS + timer.mRemainingMS )
@@ -302,7 +302,6 @@ void TimerManager::removeTimedEvent( Event::Id eventId,
          // special id used to remove all events for a dispatcher
          if ( timer.mEvent->getEventId() == eventId
                   || eventId == Event::kInvalidEventId ) {
-            //TODO check if correct.
             i = mList.erase( i );
             continue;
          }
@@ -326,8 +325,7 @@ void TimerManager::addTimerNode( const TimerNode& newTimer )
       diff = newTimer.mTick - timer.mTick;
 
       if ( diff < 0 ) {
-         //TODO check if correct.
-         //i.insertBefore( newTimer );
+         // insert before
          (void) mList.insert( i, newTimer );
          inserted = true;
          break;
