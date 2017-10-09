@@ -19,36 +19,42 @@
  *      Author: lia1hc
  */
 
-#include "Thread.h"
 #include "Mutex.h"
 #include "TestCase.h"
-
-class ThreadTest: public TestCase {
+#include "Thread.h"
+#include <iostream>
+#include <unistd.h>
+using namespace std;
+class TestClass {
 public:
-   ThreadTest() :
-         TestCase( "ThreadTest" ) {
-      SetTestName( "ThreadTest" );
+   TestClass( const char * name ) :
+      mThread( name, this, &TestClass::mainThread, false )
+      {
+      mThread.Start();
    }
-
-   virtual ~ThreadTest() {
-      printf( "ThreadTest::~ThreadTest() Enter()\n" );
+   virtual ~TestClass() {
    }
 
 private:
-   void Run() {
-      for (int i = 0; i < 10; i++)
-      printf( "ThreadTest::Run() Enter()\n" );
+   void mainThread() {
+      while (1) {
+      printf( "%s=%p\n", mThread.GetName(), mThread.GetCurrent() );
+         sleep( 1 );
+      }
    }
+   Runnable<TestClass> mThread;
 };
 
 int main( int argc, char* argv[] )
 {
-   ThreadTest *t = new ThreadTest();
-   printf( "ThreadTest th=%lu\n", pthread_self() );
-   t->Start();
-   printf( "ThreadTest End()\n" );
-   delete t;
-
+   TestClass *t1 = new TestClass( "threadTest1" );
+   TestClass *t2 = new TestClass( "threadTest2" );
+   TestClass *t3 = new TestClass( "threadTest3" );
+   (void) t1;
+   (void) t2;
+   (void) t3;
+   while (1) {
+   }
 }
 
 

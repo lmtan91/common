@@ -265,8 +265,9 @@ int EventDispatcher::removeAll()
 bool EventDispatcher::isThreadCurrent()
 {
 
-   if ( Thread::GetCurrent() == getDispatcherThread() )
+   if ( Thread::GetCurrent() == getDispatcherThread() ) {
       return true;
+   }
    return false;
 }
 
