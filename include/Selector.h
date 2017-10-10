@@ -57,28 +57,46 @@ public:
    /**=========================================================================
     * @brief Constructor
     *
-    * @param[in]
+    * @param[in]  name     This as the thread name.
     *=========================================================================*/
-   Selector();
+   Selector( const char *name = NULL );
 
    /**=========================================================================
     * @brief Destructor
     *
-    *
-    * @param[in]
     *=========================================================================*/
    virtual ~Selector();
 
    /**=========================================================================
-    * @brief Method description
+    * @brief Call to shutdown the thread for the selector and wait for it to end
+    * If this is not called the destructor will call it, but sometimes it's not
+    * convenient to wait for the destructor.
     *
-    *
-    * @param[in]
-    * @param[out]
-    *
-    * @return
-    * @retval
     *=========================================================================*/
+   void shutdown();
+
+   /**=========================================================================
+    * @brief Add a listener for a set of poll events.
+    *
+    * param[in] fd       The file descriptor to listener for events on.
+    * param[in] events   The bit field of event to listen for. When these events
+    * occur the listener will be called.
+    * @param    listener The interface to call when an event occurs.
+    * @param    pri_data This data will be passed to the listener when ever the
+    * listener is informed of an event.
+    *=========================================================================*/
+   void addListener( int fd, short events, SelectorListener *listener,
+            uint32_t pri_data = 0 );
+
+   /**=========================================================================
+    * @brief Remove a listener(s) previously added.  We remove any matches
+    * to the fd and the listener interface.
+    *
+    * @param[in] fd        The file descriptor that was previously added.
+    * @param     listener  The interface previously added.
+    *=========================================================================*/
+   void removeListener( int fd, SelectorListener *listener );
+
 private:
 
    struct ListenerNode {
