@@ -3,7 +3,8 @@ LOADED_uconnect/src/build.mk := 1
 
 DIR := common/include
 
-TARGET_PROGS = conditionTest threadTest eventAgentTest eventThreadTest listTest
+TARGET_PROGS = conditionTest threadTest eventAgentTest eventThreadTest listTest \
+		timerUnitTest
 
 INCDIRS_$(DIR) := $(TOPSRCDIR)/$(DIR) $(TOPSRCDIR)/$(DIR)/pubinc
 
@@ -31,6 +32,9 @@ LDFLAGS_appstarter = -luconnect
 
 SRCS_servertest := $($(DIR)_SERVERTEST)
 LDFLAGS_servertest = -luconnect
+
+SRCS_timerUnitTest := timerUnitTest
+LDFLAGS_timerUnitTest = -lcommon
 
 BIN = test
 

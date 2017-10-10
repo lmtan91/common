@@ -31,6 +31,7 @@ public:
       mThread( name, this, &TestClass::mainThread, false )
       {
       mThread.Start();
+      printf( "creating %p\n", &mThread );
    }
    virtual ~TestClass() {
    }
