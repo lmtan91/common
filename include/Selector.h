@@ -18,6 +18,11 @@
 /*****************************************************************************
  * INCLUDE FILES
  *****************************************************************************/
+#include <sys/poll.h>
+#include <list>
+#include "EventThread.h"
+#include "Mutex.h"
+
 /**============================================================================
  * The interface must be implemented by any class want to receive info about
  * file events.
@@ -75,6 +80,58 @@ public:
     * @retval
     *=========================================================================*/
 private:
+
+   struct ListenerNode {
+      enum {
+         kStateAdding, kStateRemoving, kStateListening
+      };
+
+      /**======================================================================
+       * @brief Default Constructor
+       *
+       *======================================================================*/
+      ListenerNode() :
+               mFd( -1 ), mEvents( -1 ), mListener( NULL ), mPrivateData( 0 ), mState(
+                        kStateAdding )
+      {
+      }
+
+      /**======================================================================
+       * @brief Constructor
+       *
+       * @param[in] fd        File descriptor.
+       * @param     listener  The listener.
+       *======================================================================*/
+      ListenerNode( int fd, SelectorListener *listener ) :
+               mFd( fd ), mEvents( -1 ), mListener( listener ), mPrivateData(
+                        0 ), mState( kStateAdding )
+      {
+      }
+
+      /**======================================================================
+       * @brief Overloading comparison operator ==.
+       *
+       * @param[in] other        Other listener node.
+       * @return    bool
+       *======================================================================*/
+      bool operator==( const ListenerNode &other )
+      {
+         if ( mFd == other.mFd
+                  && ( ( ( NULL == mListener ) || ( NULL == other.mListener ) )
+                           || ( mListener == other.mListener ) ) ) {
+            return true;
+         } else {
+            return false;
+         }
+      }
+
+      int mFd;
+      short mEvents;
+      SelectorListener *mListener;
+      uint32_t mPrivateData;
+      int mState;
+   };
+
    enum {
       PIPE_READER = 0, PIPE_WRITER
    };
@@ -104,6 +161,51 @@ private:
     * @param[in] events The no of fds.
     *=========================================================================*/
    void fillPollFds( struct pollfd *fds, int &numFds );
+
+   /**=========================================================================
+    * @brief This is the main loop, the innermost portion of the Selector
+    * event loop.  The thread is here most of the time, unless we are
+    * processing an event.
+    *=========================================================================*/
+   void threadMain();
+
+   /**=========================================================================
+    * @brief Send a null event to the selector to wake it up.
+    *=========================================================================*/
+   void wakeThread();
+
+   /**=========================================================================
+    * @brief Get dispatcher thread.
+    *
+    * @return Thread*
+    *=========================================================================*/
+   const Thread *getDispatcherThread();
+
+   /**=========================================================================
+    * @brief Find ListenerNode corresponding to this fd (and optionally
+    * the listener.
+    *
+    * @param[in]  fd       File descriptor.
+    * param       listener The listener optionally.
+    * @return     ListenerNode
+    *=========================================================================*/
+   ListenerNode *findListener( int fd, SelectorListener *listener = NULL );
+
+   std::list<ListenerNode*> mList;
+
+   Mutex mLock;
+
+   int mPipe[ 2 ];
+
+   Runnable<Selector> mThread;
+
+   bool mShutdown;
+
+   bool mRunning;
+
+   bool mUpdateFds;
+
+   Condition mCondition;
 };
 
 #endif /* ifndef INCLUDE_SELECTOR_H_ */
