@@ -174,7 +174,7 @@ inline void setTimeStruct( struct timeval *t, uint32_t msecs ) {
  * @brief addOffset
  *
  * @param[in]     msecs
- * @param[out]    *t
+ * @param        *t
  * @return        void
  *=========================================================================*/
 inline void addOffset( struct timespec *t, int msecs ) {

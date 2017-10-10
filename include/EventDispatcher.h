@@ -77,6 +77,9 @@ public:
 
    /**=========================================================================
     * @brief Send a event at a later time.
+    *
+    * @param   ev       Event to be sent.
+    * @param   msecs    msecs before sent an event.
     *=========================================================================*/
    void sendTimedEvent( Event *ev, uint32_t msecs );
 

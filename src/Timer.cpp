@@ -99,7 +99,7 @@ void TimerManager::clockHandler()
             }
          }
       } else {
-         std::cout << "Signal recieved on timer condition?\n";
+         std::cout << "Signal received on timer condition?\n";
       }
    }
 }
@@ -128,7 +128,7 @@ void TimerManager::handleTick()
       mList.pop_front();
 
       // If the timer doesn't have an event then we call the listener
-      if ( timer.mEvent == NULL ) {
+      if ( NULL == timer.mEvent ) {
          if ( timer.mListener != NULL ) {
             timer.mListener->onTimeout( timer.mPrivateData );
          }

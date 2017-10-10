@@ -24,6 +24,7 @@
 #include <unistd.h>
 #include <pthread.h>
 
+#include "Timer.h"
 #include "Thread.h"
 #include "Mutex.h"
 #include "GlobalConstructor.h"
@@ -166,8 +167,7 @@ void Thread::Destroy()
 {
    mInited = false;
    Mutex::Destroy();
-   //TODO
-//   TimerManager::destroyManager();
+   TimerManager::destroyManager();
 }
 
 void Thread::OnStop() const
