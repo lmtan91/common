@@ -19,6 +19,9 @@
  *      Author: lia1hc
  */
 
+#include <unistd.h>
+#include <fcntl.h>
+
 #include "Selector.h"
 
 Selector::Selector( const char *name ) :
@@ -95,7 +98,7 @@ void Selector::addListener( int fd, short events, SelectorListener *listener,
    mList.push_back( node );
    updateListeners();
 
-   printf( "added fd %d events %x, list size %d\n", fd, events, mList.size() );
+   printf( "added fd %d events %x, list size %ld\n", fd, events, mList.size() );
 }
 
 void Selector::removeListener( int fd, SelectorListener *listener )
@@ -247,4 +250,141 @@ void Selector::threadMain()
       }
    }
    printf( "Thread exiting\n" );
+}
+
+void Selector::fillPollFds( struct pollfd *fds, int &numFds )
+{
+   AutoLock m( mLock );
+
+   fds[ 0 ].fd = mPipe[ PIPE_READER ];
+   fds[ 0 ].events = POLLIN;
+
+   numFds = 1;
+
+   std::list<ListenerNode*>::iterator i = mList.begin();
+   while ( i != mList.end() ) {
+      // If the current node is marked as removal then remove it.
+      if ( ListenerNode::kStateRemoving == ( *i )->mState ) {
+         delete *i;
+         i = mList.erase( i );
+      }
+      else {
+         bool needAdd = true;
+
+         // Loop to try to find if this ListenerNode has a duplicate
+         // fd to one already added to the array.   Start at index
+         // 1 because index 0 is reserved for the internal pipe
+         for (int j = 1; j < numFds; j++) {
+            if ( fds[ j ].fd == ( *i )->mFd ) {
+               fds[ j ].events |= ( *i )->mEvents;
+               needAdd = false;
+               break;
+            }
+         }
+
+         // If we didn't find that this is a duplicate then we
+         // need to add an entry in the pollfds array and update
+         // the numFds value
+         if ( needAdd ) {
+            // If we reach the maximum size of the pollfds array
+            // then we are just going to ignore attempts to add
+            // further listener nodes
+            if ( kMaxPollFds == numFds ) {
+               printf( "Max listeners reached, dropping listener\n" );
+            }
+            else {
+               fds[ numFds ].fd = ( *i )->mFd;
+               fds[ numFds ].events = ( *i )->mEvents;
+               ++numFds;
+            }
+
+            // This is just a warning for debug purposes.   When we
+            // reach the "Warn" point this message will be printed
+            if ( numFds == kWarnPollFds ) {
+               printf( "Listeners exceeding warning limit\n" );
+            }
+         }
+
+         // All done with this ListenerNode, update state to "Listening" and
+         // move to the next.
+         ( *i )->mState = ListenerNode::kStateListening;
+         ++i;
+      }
+   }
+
+   // Debug
+   for (int i = 0; i < numFds; i++) {
+      printf( "file entry %d: fd %d events %x\n", i, fds[ i ].fd,
+               fds[ i ].events );
+   }
+
+   printf( "poll on %d fds, size %ld\n", numFds, mList.size() );
+
+   mCondition.Broadcast();
+}
+
+bool Selector::callListeners( int fd, uint32_t events )
+{
+   AutoLock l( mLock );
+   ListenerNode match( fd, NULL );
+   bool result = false;
+
+   std::list<ListenerNode*>::iterator node = mList.begin();
+   while ( node != mList.end() ) {
+      if ( ListenerNode::kStateListening != ( *node )->mState ) {
+
+      }
+      else if ( *( *node ) == match ) {
+         printf( "got event %x %p\n", events, *node );
+
+         SelectorListener *interface = ( *node )->mListener;
+         uint32_t pd = ( *node )->mPrivateData;
+
+         // If we receive a POLLHUP or a POLLNVAL we are going to
+         // automatically mark the ListenerNode for removal.  This
+         // prevents us from getting into a tight loop in the case
+         // that the user neglects to respond to the poll event by
+         // removing their listener.
+         if ( events & ( POLLHUP | POLLNVAL ) ) {
+            if ( events & POLLHUP ) {
+               printf( "POLLHUP recieved on fd = %d (%p)\n", fd, *node );
+            }
+
+            if ( events & POLLNVAL ) {
+               printf( "POLLNVAL recieved on fd = %d (%p)\n", fd, *node );
+            }
+
+            // Update state to "Removing" and set the result to true
+            // to indicate that we have made listener updates
+            // The node will be cleared in the fillPollFds method.
+            ( *node )->mState = ListenerNode::kStateRemoving;
+            result = true;
+         }
+
+         // Now perform our callback
+         if ( interface != NULL ) {
+            printf( "eventsCallback %p %d %d\n", interface, events, fd );
+            interface->processFileEvents( fd, events, pd );
+            printf( "eventsCallback done\n" );
+         }
+      }
+      ++node;
+   }
+
+   return result;
+}
+
+const Thread *Selector::getDispatcherThread()
+{
+   return &mThread;
+}
+
+void Selector::wakeThread()
+{
+   char buf[] = "EVNT";
+   int ret = write( mPipe[ PIPE_WRITER ], &buf, 4 );
+
+   if ( ret != 4 ) {
+      printf( "write to pipe failed %d\n", ret );
+   }
 }
