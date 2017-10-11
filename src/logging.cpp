@@ -29,8 +29,8 @@ SET_LOG_LEVEL( LOG_LVL_NOTICE );
 #define LOGGING_MALLOC( size )	malloc( (size) )
 #define LOGGING_FREE( ptr )		free( (ptr) )
 
-int jh_log_indent = 0;
-int jh_log_indent_size = 0;
+int log_indent = 0;
+int log_indent_size = 0;
 
 static char *log_names_buffer = NULL;
 
@@ -45,13 +45,13 @@ static int logging_max_preamble = 0;
 
 // This array MUST match in size and entry to the logging levels
 // defined in logging.h
-const char* log_preamble_syslog[] = { "LOG E: ",			// LOG_LVL_ERR
-         "LOG E: ",			// LOG_LVL_ERR_PERROR
-         "LOG W: ",			// LOG_LVL_WARN
-         "LOG W: ",			// LOG_LVL_WARN_PERROR
-         "LOG N: ",			// LOG_LVL_NOTICE
-         "LOG I: ",			// LOG_LVL_INFO
-         "LOG D: ",			// LOG_LVL_NOISE (Preamble is D for clarity)
+const char* log_preamble_syslog[] = { "LOG E: ", // LOG_LVL_ERR
+         "LOG E: ",                             // LOG_LVL_ERR_PERROR
+         "LOG W: ",                             // LOG_LVL_WARN
+         "LOG W: ",                             // LOG_LVL_WARN_PERROR
+         "LOG N: ",                             // LOG_LVL_NOTICE
+         "LOG I: ",                             // LOG_LVL_INFO
+         "LOG D: ",                 // LOG_LVL_NOISE (Preamble is D for clarity)
          NULL, };
 
 // This array MUST match in size and entry to the logging levels
