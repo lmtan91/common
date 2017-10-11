@@ -116,6 +116,30 @@ private:
             TestPassed();
          }
          break;
+      case 2:
+         Func2( 1, 2 );
+         if ( mTestState != 1 ) {
+            TestFailed( "Event not received\n" );
+         }
+         else if ( sEventCount != 0 ) {
+            TestFailed( "Event count != 0 (%d)", sEventCount );
+         } else {
+            TestPassed();
+         }
+         break;
+
+      case 3:
+         int res = Func3( 3 );
+         // Sync Event no need to sleep.
+         if ( mTestState != 1 )
+            TestFailed( "Event not recieved" );
+         else if ( res != 1000 )
+            TestFailed( "Result not valid" );
+         else if ( sEventCount != 0 )
+            TestFailed( "Event count != 0 (%d)", sEventCount );
+         else
+            TestPassed();
+         break;
       }
    }
 };
@@ -123,7 +147,8 @@ private:
 int EventTest::sEventCount = 0;
 
 EventTest::EventTest( Selector *s, int number ) :
-         TestCase( "EventTest" ), mTestNum( number ), mSelector( s )
+         TestCase( "EventTest" ), mTestNum( number ), mTestState( 0 ), mSelector(
+                  s )
 {
 
    switch (number) {
@@ -154,6 +179,20 @@ EventTest::~EventTest() {
 void EventTest::Func1() {
    printf( "EventTest::Func1()\n" );
    mSelector->sendEvent( new Event1() );
+}
+
+int EventTest::Func3( uint32_t p1 )
+{
+   SmartPtr<Event3> ev = new Event3( p1 );
+   mSelector->sendEventSync( ev );
+   if ( ev->mValid == false )
+      TestFailed( "Ev had been deleted" );
+   return ev->mP1;
+}
+
+void EventTest::Func2( uint32_t p1, uint16_t p2 )
+{
+   mSelector->sendEventSync( new Event2( p1, p2 ) );
 }
 
 void EventTest::ProcessFunc1( Event1 *ev )
@@ -188,8 +227,9 @@ int main( int argc, char* argv[] )
    Selector testSelector;
 
    test_set[ 0 ] = new EventTest( &testSelector, 1 );
-
-   runner.RunAll( test_set, 1 );
+   test_set[ 1 ] = new EventTest( &testSelector, 2 );
+   test_set[ 2 ] = new EventTest( &testSelector, 3 );
+   runner.RunAll( test_set, 3 );
 
    return 0;
 }

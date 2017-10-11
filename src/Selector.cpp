@@ -184,14 +184,14 @@ void Selector::threadMain()
          }
       }
 
-      printf( "%p woke up %d", this, ret );
+      printf( "%p woke up %d\n", this, ret );
 
       if ( ret > 0 ) {
-         printf( "got %d from poll", ret );
+         printf( "got %d from poll\n", ret );
 
          for (int i = 0; i < numFds; i++) {
             if ( fds[ i ].fd == mPipe[ PIPE_READER ] ) {
-               printf( "got %x on pipe %d", fds[ 0 ].revents, fds[ i ].fd );
+               printf( "got %x on pipe %d\n", fds[ 0 ].revents, fds[ i ].fd );
 
                if ( fds[ i ].revents & POLLIN ) {
                   char buf[ 10 ];
