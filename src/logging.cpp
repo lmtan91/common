@@ -103,11 +103,11 @@ int logging_lookup_level( const char *str )
 
    // if a single digit number this is the level
    if ( str[ 0 ] >= '0' && str[ 0 ] <= '9' && str[ 1 ] == '\0' ) {
-      int res = str[ 0 ] - '0';
-      if ( res < 0 || res > LOG_LVL_NOISE )
+      const int ret = str[ 0 ] - '0';
+      if ( ret < 0 || ret > LOG_LVL_NOISE )
          return -1;
       else
-         return res;
+         return ret;
    }
 
    for (i = 0; i < ARRAY_SIZE( global_level_names ); i++) {
