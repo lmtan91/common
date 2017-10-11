@@ -195,8 +195,7 @@ void Selector::threadMain()
 
          for (int i = 0; i < numFds; i++) {
             if ( fds[ i ].fd == mPipe[ PIPE_READER ] ) {
-               printf( "got %x on pipe %d\n", fds[ 0 ].revents, fds[ i ].fd );
-
+               LOG( "got %x on pipe %d", fds[ 0 ].revents, fds[ i ].fd );
                if ( fds[ i ].revents & POLLIN ) {
                   char buf[ 10 ];
                   read( mPipe[PIPE_READER], buf, 4 );
@@ -209,11 +208,11 @@ void Selector::threadMain()
                   gotEvent = true;
                }
                else if ( fds[ i ].revents & ( POLLHUP | POLLNVAL ) ) {
-                  printf( "POLLHUP recieved on pipe\n" );
+                  LOG_ERR_FATAL( "POLLHUP recieved on pipe" );
                }
             }
             else {
-               printf( "got %x on fd %d\n", fds[ i ].revents, fds[ i ].fd );
+               LOG_NOISE( "got %x on fd %d", fds[ i ].revents, fds[ i ].fd );
                if ( fds[ i ].revents != 0 ) {
                   // if callListeners removes a listener we need to update
                   // Fds.  However only set if callListeners returns true
@@ -234,14 +233,14 @@ void Selector::threadMain()
       if ( gotEvent ) {
          Event *ev = mQueue.PollEvent();
          if ( NULL == ev ) {
-            printf( "got NULL event\n" );
+            LOG_WARN( "got NULL event" );
          }
          else if ( ev->getEventId() == Event::kSelectorUpdateEventId ) {
-            printf( "got kSelectorUpdateEventId\n" );
+            LOG( "got kSelectorUpdateEventId" );
             mUpdateFds = true;
             ev->Release();
          } else {
-            printf( "got event %d", ev->getEventId() );
+            LOG( "got event %d", ev->getEventId() );
             bool done = EventDispatcher::handleEvent( ev );
             if ( done ) {
                mRunning = false;
@@ -255,7 +254,7 @@ void Selector::threadMain()
          mUpdateFds = false;
       }
    }
-   printf( "Thread exiting\n" );
+   LOG_NOTICE( "Thread exiting" );
 }
 
 void Selector::fillPollFds( struct pollfd *fds, int &numFds )
