@@ -74,7 +74,7 @@ void Selector::shutdown()
          printf( "%s waiting for thread %s to die\n",
                   Thread::GetCurrent()->GetName(), mThread.GetName() );
          mThread.Stop();
-         mThread.Join();
+         (void) mThread.Join();
       }
    }
 }
@@ -193,7 +193,7 @@ void Selector::threadMain()
 
                if ( fds[ i ].revents & POLLIN ) {
                   char buf[ 10 ];
-                  read( mPipe[ PIPE_READER ], &buf, 4 );
+                  read( mPipe[PIPE_READER], buf, 4 );
 
                   // We need to handle events after we handle file
                   // descriptor polls because one of the events
@@ -382,7 +382,7 @@ const Thread *Selector::getDispatcherThread()
 void Selector::wakeThread()
 {
    char buf[] = "EVNT";
-   int ret = write( mPipe[ PIPE_WRITER ], &buf, 4 );
+   int ret = write( mPipe[PIPE_WRITER], buf, 4 );
 
    if ( ret != 4 ) {
       printf( "write to pipe failed %d\n", ret );

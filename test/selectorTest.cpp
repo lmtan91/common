@@ -18,7 +18,7 @@
  *  Created on: Oct 11, 2017
  *      Author: lia1hc
  */
-
+#include <unistd.h>
 #include "Selector.h"
 #include "TestCase.h"
 
@@ -121,3 +121,35 @@ private:
 };
 
 int EventTest::sEventCount = 0;
+
+EventTest::EventTest( Selector *s, int number ) :
+   TestCase( "EventTest" ), mTestNum( number ), mTestState( -1 ), mSelector( s ) {
+
+   switch (number) {
+   case 1:
+      SetTestName( "AsyncEvent" );
+      break;
+   case 2:
+      SetTestName( "SyncEvent" );
+      break;
+   case 3:
+      SetTestName( "RetSyncEvent" );
+      break;
+   }
+   mEvent1Handler = new EventMethod<EventTest, Event1>( this,
+      &EventTest::ProcessFunc1, mSelector );
+   mEvent2Handler = new EventMethod<EventTest, Event2>( this,
+      &EventTest::ProcessFunc2, mSelector );
+   mEvent3Handler = new EventMethod<EventTest, Event3>( this,
+      &EventTest::ProcessFunc3, mSelector );
+}
+
+EventTest::~EventTest() {
+   delete mEvent1Handler;
+   delete mEvent2Handler;
+   delete mEvent3Handler;
+}
+
+void EventTest::Func1() {
+   mSelector->sendEvent( new Event1() );
+}
