@@ -23,7 +23,10 @@
 #include <fcntl.h>
 
 #include "Selector.h"
+#include "logging.h"
 
+SET_LOG_CAT( LOG_CAT_ALL );
+SET_LOG_LEVEL( LOG_LVL_NOTICE );
 Selector::Selector( const char *name ) :
          mLock( true ), mThread( NULL == name ? "Selector" : name, this,
                   &Selector::threadMain ), mUpdateFds( false )
@@ -157,6 +160,7 @@ void Selector::updateListeners()
 
 void Selector::threadMain()
 {
+   TRACE_BEGIN( LOG_LVL_INFO );
    bool gotEvent = false;
    struct pollfd fds[ kMaxPollFds ];
    int numFds = 0;
@@ -164,9 +168,9 @@ void Selector::threadMain()
    fillPollFds( fds, numFds );
 
    while ( mRunning ) {
-      printf( "%p on %d files\n", this, numFds );
+      LOG( "%p on %d files", this, numFds );
       for (int i = 1; i < numFds; i++) {
-         printf( "%p fd %d\n", this, fds[ i ].fd );
+         LOG( "%p fd %d", this, fds[ i ].fd );
       }
 
       errno = 0;
@@ -174,20 +178,20 @@ void Selector::threadMain()
 
       if ( ( ret = poll( fds, numFds, -1 ) ) < 0 ) {
          if ( 0 == errno ) {
-            printf( "Poll returned %d, but didn't set errno\n", ret );
+            LOG_NOTICE( "Poll returned %d, but didn't set errno", ret );
          }
          else if ( errno == EINTR ) {
-            printf( "Poll was interrupted\n" );
+            LOG_NOISE( "Poll was interrupted" );
          }
          else {
-            printf( "Poll returned %d\n", ret );
+            LOG_ERR_PERROR( "Poll returned %d", ret );
          }
       }
 
-      printf( "%p woke up %d\n", this, ret );
+      LOG( "%p woke up %d", this, ret );
 
       if ( ret > 0 ) {
-         printf( "got %d from poll\n", ret );
+         LOG( "got %d from poll\n", ret );
 
          for (int i = 0; i < numFds; i++) {
             if ( fds[ i ].fd == mPipe[ PIPE_READER ] ) {

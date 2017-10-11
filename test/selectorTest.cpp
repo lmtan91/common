@@ -21,6 +21,10 @@
 #include <unistd.h>
 #include "Selector.h"
 #include "TestCase.h"
+#include "logging.h"
+
+SET_LOG_CAT (LOG_CAT_ALL);
+SET_LOG_LEVEL (LOG_LVL_INFO);
 
 class EventTest : public TestCase {
 public:
@@ -202,7 +206,7 @@ void EventTest::ProcessFunc1( Event1 *ev )
 
 void EventTest::ProcessFunc2( Event2 *ev )
 {
-   printf( "p1 %d p2 %d\n", ev->mP1, ev->mP2 );
+   LOG_NOTICE( "p1 %d p2 %d", ev->mP1, ev->mP2 );
    mTestState++;
    if ( ev->mP1 != 1 || ev->mP2 != 2 ) {
       TestFailed( "P1 and P2 not expected values\n" );
