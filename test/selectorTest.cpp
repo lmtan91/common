@@ -123,7 +123,8 @@ private:
 int EventTest::sEventCount = 0;
 
 EventTest::EventTest( Selector *s, int number ) :
-   TestCase( "EventTest" ), mTestNum( number ), mTestState( -1 ), mSelector( s ) {
+         TestCase( "EventTest" ), mTestNum( number ), mSelector( s )
+{
 
    switch (number) {
    case 1:
@@ -151,5 +152,44 @@ EventTest::~EventTest() {
 }
 
 void EventTest::Func1() {
+   printf( "EventTest::Func1()\n" );
    mSelector->sendEvent( new Event1() );
+}
+
+void EventTest::ProcessFunc1( Event1 *ev )
+{
+   mTestState++;
+}
+
+void EventTest::ProcessFunc2( Event2 *ev )
+{
+   printf( "p1 %d p2 %d\n", ev->mP1, ev->mP2 );
+   mTestState++;
+   if ( ev->mP1 != 1 || ev->mP2 != 2 ) {
+      TestFailed( "P1 and P2 not expected values\n" );
+   }
+}
+
+void EventTest::ProcessFunc3( Event3 *ev )
+{
+   printf( "p1 %d \n", ev->mP1 );
+   mTestState++;
+   if ( ev->mP1 != 3 ) {
+      TestFailed( "P1 and P2 not expected values\n" );
+   }
+   ev->mP1 = 1000;
+}
+
+int main( int argc, char* argv[] )
+{
+   TestRunner runner( argv[ 0 ] );
+
+   TestCase *test_set[ 10 ];
+   Selector testSelector;
+
+   test_set[ 0 ] = new EventTest( &testSelector, 1 );
+
+   runner.RunAll( test_set, 1 );
+
+   return 0;
 }

@@ -89,6 +89,30 @@ private:
    Runnable<TestCase> mThread;
 };
 
+class TestRunner {
+public:
+   TestRunner( const char *ts_name )
+   {
+      std::string filename( ts_name );
+      std::string::size_type i = filename.rfind( "/" );
+      filename.erase( 0, i + 1 );
+      filename += ".log";
+      //printf( "logging to file %s\n", filename.c_str() );
+//      FILE *log_file = fopen( filename.c_str(), "w+" );
+//      logging_set_file( log_file );
+   }
+
+   void RunAll( TestCase **array, int numTests )
+   {
+      for (int i = 0; i < numTests; i++) {
+         printf( "Running test %s\n", array[ i ]->GetTestName() );
+         if ( array[ i ]->Start() == false ) {
+            exit( EXIT_FAILURE );
+         }
+         delete array[ i ];
+      }
+   }
+};
 
 #endif // _TEST_CASE_H_
 

@@ -161,6 +161,8 @@ void Selector::threadMain()
    struct pollfd fds[ kMaxPollFds ];
    int numFds = 0;
 
+   fillPollFds( fds, numFds );
+
    while ( mRunning ) {
       printf( "%p on %d files\n", this, numFds );
       for (int i = 1; i < numFds; i++) {
