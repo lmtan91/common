@@ -31,11 +31,11 @@ Selector::Selector( const char *name ) :
          mLock( true ), mThread( NULL == name ? "Selector" : name, this,
                   &Selector::threadMain ), mUpdateFds( false )
 {
+   TRACE_BEGIN(LOG_LVL_INFO);
    int ret = pipe( mPipe );
-   printf( "pipe reader %d writer %d\n", mPipe[ PIPE_READER ],
-            mPipe[ PIPE_WRITER ] );
+   LOG( "pipe reader %d writer %d", mPipe[ PIPE_READER ], mPipe[ PIPE_WRITER ] );
    if ( ret != 0 ) {
-      printf( "failed to create pipe\n" );
+      LOG_ERR_FATAL( "failed to create pipe" );
    }
 
    mRunning = true;
@@ -47,11 +47,12 @@ Selector::~Selector()
 {
    shutdown();
 
+   LOG( "Closing pipes" );
    close( mPipe[ PIPE_WRITER ] );
    close( mPipe[ PIPE_READER ] );
 
    if ( mThread == *Thread::GetCurrent() ) {
-      printf( "A selector MUST NOT be deleted by its own thread\n" );
+      LOG_ERR_FATAL( "A selector MUST NOT be deleted by its own thread" );
    }
 
    // remove all listeners.
@@ -70,11 +71,11 @@ void Selector::shutdown()
                new Event( Event::kShutdownEventId, PRIORITY_HIGH ) );
 
       if ( mThread == *Thread::GetCurrent() ) {
-         printf( "%s declining to call Join() on %s\n",
+         LOG_WARN( "%s declining to call Join() on %s",
                   Thread::GetCurrent()->GetName(), mThread.GetName() );
       }
       else {
-         printf( "%s waiting for thread %s to die\n",
+         LOG_NOISE( "%s waiting for thread %s to die",
                   Thread::GetCurrent()->GetName(), mThread.GetName() );
          mThread.Stop();
          (void) mThread.Join();
@@ -101,7 +102,7 @@ void Selector::addListener( int fd, short events, SelectorListener *listener,
    mList.push_back( node );
    updateListeners();
 
-   printf( "added fd %d events %x, list size %ld\n", fd, events, mList.size() );
+   LOG( "added fd %d events %x, list size %ld", fd, events, mList.size() );
 }
 
 void Selector::removeListener( int fd, SelectorListener *listener )
@@ -295,7 +296,7 @@ void Selector::fillPollFds( struct pollfd *fds, int &numFds )
             // then we are just going to ignore attempts to add
             // further listener nodes
             if ( kMaxPollFds == numFds ) {
-               printf( "Max listeners reached, dropping listener\n" );
+               LOG_ERR( "Max listeners reached, dropping listener" );
             }
             else {
                fds[ numFds ].fd = ( *i )->mFd;
@@ -306,7 +307,7 @@ void Selector::fillPollFds( struct pollfd *fds, int &numFds )
             // This is just a warning for debug purposes.   When we
             // reach the "Warn" point this message will be printed
             if ( numFds == kWarnPollFds ) {
-               printf( "Listeners exceeding warning limit\n" );
+               LOG_WARN( "Listeners exceeding warning limit" );
             }
          }
 
@@ -319,11 +320,10 @@ void Selector::fillPollFds( struct pollfd *fds, int &numFds )
 
    // Debug
    for (int i = 0; i < numFds; i++) {
-      printf( "file entry %d: fd %d events %x\n", i, fds[ i ].fd,
-               fds[ i ].events );
+      LOG_NOISE( "file entry %d: fd %d events %x", i, fds[ i ].fd, fds[ i ].events );
    }
 
-   printf( "poll on %d fds, size %ld\n", numFds, mList.size() );
+   LOG( "poll on %d fds, size %ld", numFds, mList.size() );
 
    mCondition.Broadcast();
 }
@@ -340,7 +340,7 @@ bool Selector::callListeners( int fd, uint32_t events )
 
       }
       else if ( *( *node ) == match ) {
-         printf( "got event %x %p\n", events, *node );
+         LOG( "got event %x %p", events, *node );
 
          SelectorListener *interface = ( *node )->mListener;
          uint32_t pd = ( *node )->mPrivateData;
@@ -352,11 +352,11 @@ bool Selector::callListeners( int fd, uint32_t events )
          // removing their listener.
          if ( events & ( POLLHUP | POLLNVAL ) ) {
             if ( events & POLLHUP ) {
-               printf( "POLLHUP recieved on fd = %d (%p)\n", fd, *node );
+               LOG_INFO( "POLLHUP recieved on fd = %d (%p)", fd, *node );
             }
 
             if ( events & POLLNVAL ) {
-               printf( "POLLNVAL recieved on fd = %d (%p)\n", fd, *node );
+               LOG_WARN( "POLLNVAL recieved on fd = %d (%p)", fd, *node );
             }
 
             // Update state to "Removing" and set the result to true
@@ -368,9 +368,9 @@ bool Selector::callListeners( int fd, uint32_t events )
 
          // Now perform our callback
          if ( interface != NULL ) {
-            printf( "eventsCallback %p %d %d\n", interface, events, fd );
+            LOG_NOISE( "eventsCallback %p %d %d", interface, events, fd );
             interface->processFileEvents( fd, events, pd );
-            printf( "eventsCallback done\n" );
+            LOG_NOISE( "eventsCallback done" );
          }
       }
       ++node;
@@ -390,6 +390,6 @@ void Selector::wakeThread()
    int ret = write( mPipe[PIPE_WRITER], buf, 4 );
 
    if ( ret != 4 ) {
-      printf( "write to pipe failed %d\n", ret );
+      LOG_ERR( "write to pipe failed %d", ret );
    }
 }
