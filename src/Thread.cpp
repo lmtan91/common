@@ -24,12 +24,16 @@
 #include <unistd.h>
 #include <pthread.h>
 
+#include "logging.h"
 #include "Timer.h"
 #include "Thread.h"
 #include "Mutex.h"
 #include "GlobalConstructor.h"
 
-bool Thread::mInited;
+SET_LOG_CAT( LOG_CAT_ALL );
+SET_LOG_LEVEL( LOG_LVL_NOTICE );
+
+bool Thread::mInited = false;
 pthread_key_t Thread::mThreadKey;
 pthread_mutex_t Mutex::mCriticalSection;
 
@@ -38,7 +42,6 @@ GLOBAL_CONSTRUCT( &Thread::Init );
 Thread::Thread( const char * const aName, const int prio ) :
       mThread( 0 ), mJoined( false ), mSystemThread( false )
 {
-//   printf( "Thread::Thread() Enter=%p\n", this );
    strncpy( mName, aName, kThreadNameLen );
    mName[ kThreadNameLen - 1 ] = '\0';
    mPrio = prio;
@@ -54,7 +57,6 @@ Thread::~Thread()
 Thread::Thread( const pthread_t aThread, const char * const aName ) :
       mThread( 0 ), mJoined( false ), mSystemThread( true )
 {
-//   printf( "Thread::Thread2() Enter aThread=%lu\n", aThread );
    if ( NULL == aName ) {
       (void) snprintf( mName, kThreadNameLen, "t0x%lx", aThread );
    }
@@ -69,15 +71,17 @@ Thread::Thread( const pthread_t aThread, const char * const aName ) :
 
 int32_t Thread::Start()
 {
+   TRACE_BEGIN( LOG_LVL_INFO );
+
    int ret;
    pthread_attr_t attrs;
 
 
-   printf( "creating thread %s\n", GetName() );
+   LOG_INFO( "creating thread %s", GetName() );
 
    ret = pthread_attr_init( &attrs );
    if ( ret ) {
-      printf( "pthread_attr_init with error %d\n", ret );
+      LOG_ERR_FATAL( "pthread_attr_init with error %d", ret );
    }
 
    if ( mPrio > 0 && 0 == geteuid() ) {
@@ -91,8 +95,10 @@ int32_t Thread::Start()
          static_cast<void *>( this ) );
 
    if ( ret != 0 ) {
-      printf( "Error from thread_create is %d\n", ret );
+      LOG_ERR( "Error from thread_create is %d", ret );
    }
+
+   LOG( "Thread create %d", ret );
 
    // Destroy attributes
    (void) pthread_attr_destroy( &attrs );
@@ -108,11 +114,10 @@ void Thread::Stop() const
 int32_t Thread::Join()
 {
    int32_t ret = 0;
-   printf( "Thread::Join() Enter()\n" );
    if ( !mJoined ) {
-      printf( "this=%p, curr=%p\n", this, GetCurrent() );
       if (*this == *GetCurrent()) {
-         printf( "thread %s attempting to join itself: DEADLOCK\n", GetName() );
+         LOG_ERR_FATAL( "thread %s attempting to join itself: DEADLOCK",
+                  GetName() );
          return -1;
       }
 
@@ -120,30 +125,25 @@ int32_t Thread::Join()
       if ( 0 == ret ) {
          mJoined = true;
       } else
-         printf( "pthread_join(%s) failed with error %d\n", GetName(), ret );
+         LOG_ERR( "pthread_join(%s) failed with error %d", GetName(), ret );
    }
-   printf( "Thread::Join() Exit()\n" );
    return ret;
 }
 
 bool Thread::operator ==( const Thread &t ) const
 {
-   printf( "Thread::operator == Enter()\n" );
    return mThread == t.mThread;
 }
 
 void Thread::Exit()
 {
-   printf( "Thread::Exit() Enter()\n" );
    pthread_exit( NULL );
-   printf( "Thread::Exit() Exit()\n" );
 }
 
 Thread *Thread::GetCurrent()
 {
    Thread *t = reinterpret_cast<Thread*>( pthread_getspecific( mThreadKey ) );
    if (NULL == t) {
-      printf( "Thread::GetCurrent() NULL\n" );
       t = new Thread( pthread_self(), NULL );
    }
    return t;
@@ -151,10 +151,9 @@ Thread *Thread::GetCurrent()
 
 void Thread::Init()
 {
-//   printf( "Thread::Init() Enter\n" );
    if (!mInited) {
       if (pthread_key_create( &mThreadKey, &thread_key_destructor ) != 0) {
-         printf( "Failed to create thread key\n" );
+         LOG_ERR( "Failed to create thread key" );
       }
       mInited = true;
 
@@ -172,17 +171,19 @@ void Thread::Destroy()
 
 void Thread::OnStop() const
 {
+   TRACE_BEGIN( LOG_LVL_INFO );
    (void) pthread_cancel( mThread );
 }
 
 void *Thread::start_thread( void * const arg )
 {
+   TRACE_BEGIN( LOG_LVL_INFO );
+
    Thread * const aThread = static_cast<Thread *>( arg );
 
    (void) pthread_setspecific( mThreadKey, aThread );
 
-   printf( "started pid %d tid %d\n", getpid(),
-            static_cast<uint>( pthread_self() ) );
+   LOG( "started pid %d tid %d", getpid(),static_cast<uint>( pthread_self() ) );
 
    aThread->OnStart();
 
@@ -191,7 +192,6 @@ void *Thread::start_thread( void * const arg )
 
 void Thread::thread_key_destructor( void * const arg )
 {
-   printf( "Thread::thread_key_destructor Enter()\n" );
    Thread *t = static_cast<Thread *>( arg );
    if (t->mSystemThread) {
       delete t;

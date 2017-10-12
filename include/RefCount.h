@@ -18,8 +18,6 @@
 /*****************************************************************************
  * INCLUDE FILES
  *****************************************************************************/
-/* Standard */
-#include <stdio.h>
 
 #include "Alias.h"
 #include "Mutex.h"
@@ -208,58 +206,42 @@ public:
 
    bool operator==( const T *obj ) const
    {
-      printf( "SmartPtr::operator==( const T *obj ) Enter()\n" );
       return ( mObj == obj );
    }
    bool operator==( const SmartPtr &ptr ) const
    {
-      printf( "SmartPtr::operator==( const SmartPtr &ptr ) Enter()\n" );
       return ( mObj == ptr.mObj );
    }
    bool operator!=( const T *obj ) const
    {
-      printf( "SmartPtr::operator!=( const T *obj ) Enter()\n" );
-
       return ( mObj != obj );
    }
    bool operator!=( const SmartPtr &ptr ) const
    {
-      printf( "SmartPtr::operator!=( const SmartPtr &ptr ) Enter()\n" );
-
       return ( mObj != ptr.mObj );
    }
 
    T* operator->()
    {
-      printf( "SmartPtr::operator->() Enter()\n" );
-
       return mObj;
    }
    const T* operator->() const
    {
-      printf( "SmartPtr::operator->() const\n" );
-
       return mObj;
    }
 
    operator T*()
    {
-      printf( "SmartPtr::operator T*()\n" );
-
       return mObj;
    }
 
    operator const T*() const
    {
-      printf( "SmartPtr::operator const T*() const\n" );
-
       return mObj;
    }
 
    const T* getObjectForDebug() const
    {
-      printf( "SmartPtr::getObjectForDebug\n" );
-
       return mObj;
    }
 
