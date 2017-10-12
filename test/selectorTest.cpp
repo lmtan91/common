@@ -223,6 +223,135 @@ void EventTest::ProcessFunc3( Event3 *ev )
    ev->mP1 = 1000;
 }
 
+class OtherListenerClass;
+class SelectorTest : public TestCase, public SelectorListener {
+public:
+   SelectorTest( Selector *s );
+   virtual ~SelectorTest();
+
+private:
+   OtherListenerClass *other;
+   Selector *mSelector;
+   int mPipe[ 2 ];
+
+   int mTestState;
+   int mEventCount;
+
+   void SendData();
+   void processFileEvents( int fd, short events, uint32_t pri_data );
+
+   void Run()
+   {
+      mTestState = 0;
+      SendData();
+      usleep( 100000 );
+      if ( mTestState != 2 ) {
+         TestFailed( "Both listeners not called" );
+      }
+
+      SendData();
+      usleep( 100000 );
+      if ( mTestState != 4 ) {
+         TestFailed( "Both listeners not called" );
+      }
+
+      SendData();
+      usleep( 100000 );
+      if ( mTestState != 6 ) {
+         TestFailed( "Both listeners not called" );
+      }
+
+      TestPassed();
+   }
+   friend class OtherListenerClass;
+};
+
+class OtherListenerClass : public SelectorListener {
+public:
+   OtherListenerClass(int fd, int pd, SelectorTest *testCase):
+            mFd( fd ), mPrivateData( pd ), mTestCase( testCase )
+   {
+   }
+
+   virtual ~OtherListenerClass()
+   {
+   }
+
+   void processFileEvents( int fd, short events, uint32_t pri_data );
+
+private:
+   int mFd;
+   uint32_t mPrivateData;
+   SelectorTest *mTestCase;
+};
+
+SelectorTest::SelectorTest( Selector *s ) :
+         TestCase( "SelectorTest" ), mSelector( s )
+{
+   SetTestName( "File Events" );
+   int ret = pipe( mPipe );
+   if ( ret != 0 ) {
+      LOG_ERR_FATAL( "failed to create pipe" );
+   }
+
+   other = new OtherListenerClass( mPipe[ 0 ], 11, this );
+   mSelector->addListener( mPipe[ 0 ], POLLIN, this, 10 );
+   mSelector->addListener( mPipe[ 0 ], POLLIN, other, 11 );
+}
+
+SelectorTest::~SelectorTest()
+{
+   mSelector->removeListener( mPipe[ 0 ], this );
+   mSelector->removeListener( mPipe[ 0 ], other );
+   close( mPipe[ 0 ] );
+   close( mPipe[ 1 ] );
+}
+
+void SelectorTest::SendData()
+{
+   TRACE_BEGIN(LOG_LVL_INFO);
+   write( mPipe[ 1 ], "FOOBAR", 6 );
+}
+
+void SelectorTest::processFileEvents( int fd, short events, uint32_t pri_data )
+{
+   TRACE_BEGIN(LOG_LVL_INFO);
+   uint8_t buffer[ 10 ];
+
+   LOG_NOTICE( "fd %d, events %x private data %d", fd, events, pri_data );
+   if ( events & POLLNVAL ) {
+      TestFailed( "Received POLLNVAL" );
+   }
+
+   if ( fd == mPipe[ 0 ] && pri_data == 10 && ( events & POLLIN ) ) {
+      mTestState++;
+   }
+   else {
+      TestFailed( "First Listener Bad Params" );
+   }
+
+   if ( events & POLLIN ) {
+      int ret = read( fd, buffer, 10 );
+      print_buffer( "READ", buffer, ret );
+
+   }
+}
+
+void OtherListenerClass::processFileEvents( int fd, short events,
+         uint32_t pri_data )
+{
+   TRACE_BEGIN(LOG_LVL_INFO);
+
+   if ( events & POLLNVAL ) {
+      mTestCase->TestFailed( "Received POLLNVAL" );
+   }
+
+   if ( fd == mFd && pri_data == mPrivateData && ( events & POLLIN ) ) {
+      mTestCase->mTestState++;
+   } else {
+      mTestCase->TestFailed( "First Listener Bad Params" );
+   }
+}
 int main( int argc, char* argv[] )
 {
    TestRunner runner( argv[ 0 ] );
@@ -233,7 +362,8 @@ int main( int argc, char* argv[] )
    test_set[ 0 ] = new EventTest( &testSelector, 1 );
    test_set[ 1 ] = new EventTest( &testSelector, 2 );
    test_set[ 2 ] = new EventTest( &testSelector, 3 );
-   runner.RunAll( test_set, 3 );
+   test_set[ 3 ] = new SelectorTest( &testSelector );
+   runner.RunAll( test_set, 4 );
 
    return 0;
 }
