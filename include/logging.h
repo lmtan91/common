@@ -272,7 +272,7 @@ __END_DECLS
 #define LOG_CAT_DEFAULT	LOG_BIT_VALUE( 31 )
 #define LOG_CAT_TRACE	LOG_BIT_VALUE( 30 )
 
-#define LOG_CAT_ALL		0xffffffff
+#define LOG_CAT_ALL     0xffffffff
 
 /**
  * @brief Logging Levels - these are a subset of the kernel levels,

@@ -21,19 +21,19 @@
 #include <iostream>
 #include "EventDispatcher.h"
 #include "Timer.h"
+#include "logging.h"
 
-using namespace std;
-
+SET_LOG_CAT( LOG_CAT_ALL );
+SET_LOG_LEVEL( LOG_LVL_NOTICE );
 EventDispatcherHelper::EventDispatcherHelper() :
          mLock( true )
 {
-   cout << "EventDispatcherHelper::EventDispatcherHelper()" << endl;
+   TRACE_BEGIN(LOG_LVL_INFO);
 }
 
 EventDispatcherHelper::~EventDispatcherHelper()
 {
-   cout << "EventDispatcherHelper::~EventDispatcherHelper()" << endl;
-   for (list<EventListenerNode*>::iterator i = mEventList.begin();
+   for (std::list<EventListenerNode*>::iterator i = mEventList.begin();
             i != mEventList.end(); ++i) {
       delete *i;
    }
@@ -46,7 +46,7 @@ void EventDispatcherHelper::dispatchEvent( Event *ev )
    DebugAutoLock( mLock );
 
    if ( !ev ) {
-      cout << "Attemp to dispatch NULL event." << endl;
+      LOG_WARN( "Attemp to dispatch NULL event." );
       return;
    }
 
@@ -63,7 +63,7 @@ void EventDispatcherHelper::dispatchEvent( Event *ev )
 
 void EventDispatcherHelper::lookupListeners( Event *ev )
 {
-   for (list<EventListenerNode*>::iterator i = mEventList.begin();
+   for (std::list<EventListenerNode*>::iterator i = mEventList.begin();
             i != mEventList.end(); ++i) {
       // Prune dead listener nodes
       if ( ( *i )->mListener == NULL ) {
@@ -99,7 +99,7 @@ int EventDispatcherHelper::removeEventListener( IEventListener *listener,
 {
    DebugAutoLock( mLock );
 
-   for (list<EventListenerNode*>::iterator i = mEventList.begin();
+   for (std::list<EventListenerNode*>::iterator i = mEventList.begin();
             i != mEventList.end(); ++i) {
       EventListenerNode *lnode = *i;
 
@@ -116,7 +116,6 @@ int EventDispatcherHelper::removeEventListener( IEventListener *listener,
 
 EventDispatcher::EventDispatcher()
 {
-   printf( "EventDispatcher::EventDispatcher()\n" );
    // NOTE:  This is a sort of hacky way of preventing a bad condition from
    // occuring.  It was found that when we are processing a signal to do
    // a shutdown (ie.  ctrl-c in tad) the creation of the thread in the
@@ -141,6 +140,7 @@ EventDispatcher::~EventDispatcher()
  *============================================================================*/
 void EventDispatcher::sendEventSync( Event *ev )
 {
+   TRACE_BEGIN( LOG_LVL_NOISE );
    // event ref count handled by holder.
    SyncEventHolder holder( ev );
    holder.AddRef();
@@ -149,8 +149,8 @@ void EventDispatcher::sendEventSync( Event *ev )
    wakeThread();
 
    if ( isThreadCurrent() ) {
-      cout << "Sending sync event to your current thread, I will die now..."
-               << endl;
+      LOG_ERR_FATAL(
+               "Sending sync event to your current thread, I will die now..." );
    }
 
    mSyncLock.Lock();
@@ -238,6 +238,29 @@ int EventDispatcher::remove( Event *ev )
    return 0;
 }
 
+int EventDispatcher::removeAgentsByReceiver( void* recipient )
+{
+   if ( not isThreadCurrent() ) {
+      SyncRetEventAgent1<EventDispatcher, int, void*>* e =
+               new
+      SyncRetEventAgent1<EventDispatcher, int, void*>( this,
+               &EventDispatcher::removeAgentsByReceiver, recipient );
+
+      // I am a bad person, but it's either this or make all
+      // EventAgent's publicly inherit from Event (instead of
+      // Protected inheritance), and that's a big ugly change for
+      // little benefit.
+      ( (Event*) e )->setPriority( PRIORITY_HIGH );
+
+      return e->send( this );
+   }
+
+   TimerManager *timer = TimerManager::getInstance();
+   timer->removeAgentsByReceiver( recipient, this );
+   mQueue.RemoveAgentsByReceiver( recipient );
+   return 0;
+}
+
 int EventDispatcher::removeAll()
 {
    if ( !isThreadCurrent() ) {
@@ -264,7 +287,6 @@ int EventDispatcher::removeAll()
 
 bool EventDispatcher::isThreadCurrent()
 {
-
    if ( Thread::GetCurrent() == getDispatcherThread() ) {
       return true;
    }
@@ -284,10 +306,12 @@ int EventDispatcher::removeEventListener( IEventListener *listener,
 
 void EventDispatcher::handleSyncEvent( Event *ev )
 {
+   TRACE_BEGIN( LOG_LVL_NOISE );
+
    SyncEventHolder *holder = event_cast<SyncEventHolder>( ev );
 
    if ( holder == NULL ) {
-      cout << "event must not be NULL" << endl;
+      LOG_ERR_FATAL( "event must not be NULL" );
       return;
    }
 
@@ -301,16 +325,18 @@ void EventDispatcher::handleSyncEvent( Event *ev )
 
 bool EventDispatcher::handleEvent( Event *ev )
 {
+   TRACE_BEGIN( LOG_LVL_NOISE );
+
    bool done = false;
 
    if ( ev == NULL ) {
-      cout << "called with NULL event" << endl;
+      LOG_WARN( "called with NULL event" );
       return false;
    }
 
    switch (ev->getEventId()) {
    case Event::kShutdownEventId:
-      cout << "kShutdownEventId recieved" << endl;
+      LOG_NOTICE( "kShutdownEventId recieved");
       // ignore return value
       (void) removeAll();
       done = true;
