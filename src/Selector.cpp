@@ -45,6 +45,8 @@ Selector::Selector( const char *name ) :
 
 Selector::~Selector()
 {
+   TRACE_BEGIN( LOG_LVL_INFO );
+
    shutdown();
 
    LOG( "Closing pipes" );
@@ -86,6 +88,8 @@ void Selector::shutdown()
 void Selector::addListener( int fd, short events, SelectorListener *listener,
          uint32_t pri_data )
 {
+   TRACE_BEGIN( LOG_LVL_INFO );
+
    ListenerNode *node = new ListenerNode();
 
    node->mFd = fd;
@@ -261,6 +265,7 @@ void Selector::threadMain()
 void Selector::fillPollFds( struct pollfd *fds, int &numFds )
 {
    AutoLock m( mLock );
+   TRACE_BEGIN( LOG_LVL_INFO );
 
    fds[ 0 ].fd = mPipe[ PIPE_READER ];
    fds[ 0 ].events = POLLIN;
@@ -331,6 +336,8 @@ void Selector::fillPollFds( struct pollfd *fds, int &numFds )
 bool Selector::callListeners( int fd, uint32_t events )
 {
    AutoLock l( mLock );
+   TRACE_BEGIN( LOG_LVL_INFO );
+
    ListenerNode match( fd, NULL );
    bool result = false;
 
