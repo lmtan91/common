@@ -14,7 +14,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <syslog.h>
-#include <stdarg.h>
 
 static int syslog_levels[ ] =
 {
@@ -28,7 +27,6 @@ LOG_DEBUG
 };
 
 static bool syslog_open = false;
-
 void logging_syslog_open( const char *name )
 {
    if ( syslog_open == false ) {
@@ -36,7 +34,6 @@ void logging_syslog_open( const char *name )
       syslog_open = true;
    }
 }
-
 void syslog_print( int level, const char *fmt )
 {
    syslog( syslog_levels[ level ], "%s", fmt );
