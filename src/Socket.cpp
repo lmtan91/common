@@ -528,7 +528,7 @@ int Socket::getLocalAddress( Socket::Address &addr ) {
 bool Socket::getHwAddress( const char *ifname, Socket::SocketAddress &addr ) {
    struct ifreq ifr;
    ifr.ifr_addr.sa_family = AF_INET;
-   strncpy( irf.ifr_name, ifname, 15 );
+   strncpy( ifr.ifr_name, ifname, 15 );
    int res = ioctl( mFd, SIOCGIFHWADDR, &ifr );
    if ( 0 == res ) {
       unsigned char *pChar = ( unsigned char* ) &ifr.ifr_hwaddr.sa_data;
@@ -559,7 +559,7 @@ bool Socket::getArpEntry( const char *ifname, Socket::Address &sAddr,
    sin->sin_family = AF_INET;
    sin->sin_addr = sAddr.getIpAddr();
 
-   sin = ( struct sockaddr_in* ) *areq.arp_ha;
+   sin = ( struct sockaddr_in* ) &areq.arp_ha;
    sin->sin_family = ARPHRD_ETHER;
 
    strncpy( areq.arp_dev, ifname, 15 );

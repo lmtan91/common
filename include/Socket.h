@@ -131,7 +131,7 @@ public:
         explicit Address( int port ) {
             mAddr.sin_family = AF_INET;
             mAddr.sin_port = htons( port );
-            mAddr.sin_addr = INADDR_ANY;
+         mAddr.sin_addr.s_addr = INADDR_ANY;
             mLen = sizeof(struct sockaddr_in);
         }
 
@@ -219,7 +219,7 @@ public:
         //! default constructor (255.255.255.255, 0)
         SocketAddress() {
             mAddr.sa_family = AF_INET;
-            memset( mAddr.sa_data, sizeof( mAddr.sa_data ), 0 );
+         memset( mAddr.sa_data, 0, sizeof( mAddr.sa_data ) );
         }
 
         //! Set from an sockaddr

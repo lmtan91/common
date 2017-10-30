@@ -13,7 +13,8 @@ NO_LINT=1
 endif
 
 COMMON_SRCS = Thread.cpp Mutex.cpp Condition.cpp EventQueue.cpp Timer.cpp EventDispatcher.cpp EventThread.cpp \
-				Selector.cpp logging.cpp logging_syslog.cpp
+				Selector.cpp logging.cpp logging_syslog.cpp \
+Socket.cpp
 
 SRCS_libcommon = $(COMMON_SRCS)
 
