@@ -999,7 +999,10 @@ void ServerSocket::processFileEvents( int fd, short events,
          // Call accept to initialize the new socket
          Socket *newSock = accept();
          if ( newSock != NULL ) {
-            accepted = mListener->handleAccept( this, newSock );
+            // Check if the listener wishes to accept this connection
+            if ( mListener != NULL ) {
+               accepted = mListener->handleAccept( this, newSock );
+            }
 
             // If the listener doesn't accept the new connection then close and
             // destroy it.

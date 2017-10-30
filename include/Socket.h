@@ -91,8 +91,13 @@ public:
      *=========================================================================*/
     virtual bool handleAccept( ServerSocket *server, Socket *socket ) {
         (void) server;
-        return false;
+      return handleAccept( socket );
     }
+
+   virtual bool handleAccept( Socket *socket ) {
+      ( void ) socket;
+      return false;
+   }
 
 protected:
     virtual ~SocketListener() {
