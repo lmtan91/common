@@ -42,6 +42,7 @@ class TcpSocketTest: public TestCase, public SocketListener {
 public:
    TcpSocketTest();
    virtual ~TcpSocketTest() {
+      delete mSelector;
    }
 
 private:
@@ -248,9 +249,8 @@ void TcpSocketTest::Run() {
       TestFailed( "handleClose not recieved on server" );
    }
 
-   delete mSelector;
-
    TestPassed();
+
 }
 
 void TcpSocketTest::handleData( Socket *s ) {
