@@ -159,3 +159,41 @@ int Socket::connect( const Socket::Address &addr, int timeout ) {
 
    return res;
 }
+
+/**=========================================================================
+ * @brief Connect will trigger a call to handleConnect when successful
+ *
+ * @param[in]   addr    Pair of (host, port) to connect.
+ *=========================================================================*/
+int Socket::connectAsync( const Socket::Address &addr ) {
+   TRACE_BEGIN(LOG_LVL_INFO);
+   int len_addr = 0;
+   int res = 0;
+   int saveflags, back_err;
+   const struct sockaddr *saddr = addr.getAddr( len_addr );
+
+   saveflags = fcntl( mFd, F_GETFL, 0 );
+   if ( saveflags < 0 ) {
+      return -1;
+   }
+
+   res = ::connect( mFd, saddr, len_addr );
+   back_err = errno;
+   if ( res < 0 && back_err != EINPROGRESS ) {
+      return -1;
+   }
+
+   mConnectedAsync = true;
+
+   // We need to hear POLLOUT once in order to inform us that the socket has
+   // connected. Once we get that once, we will want to unregister for POLLOUT,
+   // otherwise we'll get it all the time.
+   setConnected( true, POLLIN | POLLOUT );
+
+   // Turn off non-blocking
+   if ( fcntl( mFd, F_SETFL, saveflags ) < 0 ) {
+      return -1;
+   }
+
+   return 0;
+}
