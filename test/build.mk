@@ -4,7 +4,8 @@ LOADED_uconnect/src/build.mk := 1
 DIR := common/include
 
 TARGET_PROGS = conditionTest threadTest eventAgentTest eventThreadTest listTest \
-		timerUnitTest selectorTest
+		timerUnitTest selectorTest \
+	socketTest
 
 INCDIRS_$(DIR) := $(TOPSRCDIR)/$(DIR) $(TOPSRCDIR)/$(DIR)/pubinc
 
@@ -26,6 +27,8 @@ LDFLAGS_eventAgentTest = -lcommon
 
 SRCS_eventThreadTest := eventThreadTest.cpp
 LDFLAGS_eventThreadTest = -lcommon
+SRCS_socketTest := socketTest.cpp
+LDFLAGS_socketTest = -lcommon
 
 SRCS_appstarter := $($(DIR)_APPSTARTER)
 LDFLAGS_appstarter = -luconnect

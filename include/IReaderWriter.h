@@ -33,7 +33,8 @@ public:
      *
      *
      *=========================================================================*/
-    virtual ~IReaderWriter();
+   virtual ~IReaderWriter() {
+   }
 
     virtual void setSelector( SelectorListener *listener,
             Selector *selector )=0;

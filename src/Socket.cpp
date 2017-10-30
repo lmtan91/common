@@ -88,6 +88,25 @@ int Socket::setSockPrio( const int prio ) {
 }
 
 /**============================================================================
+ * @brief Connect to this host/port.
+ *
+ * @param[in]   addr    Pair of (host, port)
+ *============================================================================*/
+int Socket::connect( const Socket::Address &addr ) {
+   TRACE_BEGIN( LOG_LVL_INFO );
+   int len;
+   const struct sockaddr *saddr = addr.getAddr( len );
+   int res = ::connect( mFd, saddr, len );
+
+   LOG( "connect to %s on port %d", addr.getName(), addr.getPort() );
+
+   if ( res == 0 )
+      setConnected( true );
+
+   return res;
+}
+
+/**============================================================================
  * @brief Connect to this host/port, unless it takes too long.
  *
  * @param[in]   addr    Pair of (host, port) to connect.
@@ -377,9 +396,8 @@ int Socket::close() {
  *============================================================================*/
 void Socket::setConnected( bool state, int flags ) {
    LOG_INFO("Connected %d sel %p", state, mSelector);
-
    // if we are already in this state do nothing
-   if ( false == mConnected ) {
+   if ( mConnected == state ) {
       return;
    }
    mConnected = state;

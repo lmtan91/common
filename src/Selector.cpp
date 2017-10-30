@@ -149,6 +149,7 @@ Selector::ListenerNode *Selector::findListener( int fd,
 
 void Selector::updateListeners()
 {
+   TRACE_BEGIN( LOG_LVL_INFO );
    // if called from the selector, just set a flag to update the Fds list
    // otherwise send an event to update the Fds.  But we also need to wait
    // for this change to be made effective.  Otherwise we could get events
@@ -394,7 +395,7 @@ const Thread *Selector::getDispatcherThread()
 void Selector::wakeThread()
 {
    char buf[] = "EVNT";
-   int ret = write( mPipe[PIPE_WRITER], buf, 4 );
+   int ret = write( mPipe[PIPE_WRITER], &buf, 4 );
 
    if ( ret != 4 ) {
       LOG_ERR( "write to pipe failed %d", ret );
