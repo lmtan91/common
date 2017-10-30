@@ -333,21 +333,21 @@ public:
      *=========================================================================*/
     int connectAsync( const Socket::Address& addr );
 
-    /**=========================================================================
-     * @brief Called to add this socket to a selector, when data arrives you
-     * will be informed via listener. Call with NULL to remove a previously
-     * setSelector. However normally a Selector/Listener should be used for the
-     * lifetime of this object. But if your listener is destroyed before this
-     * class you should remove it so we don't call a destroyed object.
-     *
-     *=========================================================================*/
+   /**=========================================================================
+    * @brief Called to add this socket to a selector, when data arrives you
+    * will be informed via listener. Call with NULL to remove a previously
+    * setSelector. However normally a Selector/Listener should be used for the
+    * lifetime of this object. But if your listener is destroyed before this
+    * class you should remove it so we don't call a destroyed object.
+    *
+    *=========================================================================*/
     void setSelector( SocketListener *listener, Selector *selector );
 
-    /**=========================================================================
-     * @brief Read up to len of bytes from the socket. THis will often return
-     * less than len bytes, it is important to check the return value all time.
-     *
-     *=========================================================================*/
+   /**=========================================================================
+    * @brief Read up to len of bytes from the socket. THis will often return
+    * less than len bytes, it is important to check the return value all time.
+    *
+    *=========================================================================*/
     virtual int read( void *buffer, int len );
 
     /**=========================================================================
@@ -356,73 +356,73 @@ public:
      *=========================================================================*/
     void setWriteFlags( int flags );
 
-    /**=========================================================================
-     * @brief Set socket non-blocking.
-     *
-     *=========================================================================*/
+   /**=========================================================================
+    * @brief Set socket non-blocking.
+    *
+    *=========================================================================*/
     void setNonBlocking( bool isNonBlocking );
 
-    /**=========================================================================
-     * @brief Write len of bytes to the socket. Return the number actually written.
-     *
-     *=========================================================================*/
+   /**=========================================================================
+    * @brief Write len of bytes to the socket. Return the number actually written.
+    *
+    *=========================================================================*/
     int write( const void *buffer, int len );
 
-    /**=========================================================================
-     * @brief Call recvfrom (get some data, tell me who it is from)
-     *
-     *=========================================================================*/
+   /**=========================================================================
+    * @brief Call recvfrom (get some data, tell me who it is from)
+    *
+    *=========================================================================*/
     int recvfrom( void *buf, int len, Socket::Address& addr, int flags = 0 );
 
-    /**=========================================================================
-     * @brief Set flags for write.
-     *
-     *=========================================================================*/
+   /**=========================================================================
+    * @brief Call sendto (send this data to this address, doesn't work well on TCP)
+    *
+    *=========================================================================*/
     int sendto( const void *buf, int len, const Socket::Address& addr,
             int flags = 0 );
 
-    /**=========================================================================
-     * @brief Call recvmsg (scatter-gather reads)
-     *
-     * @param   buffers Vector of tupples consisting of a memory address and the
-     * requested amount of data to receive.
-     * @param   addr    Address to receive data from. This field is ignored when
-     * using a connected (TCP) socket and required when using an unconnected (UDP)
-     * socket.
-     * @param   flags   Optional recv() flags.
-     *
-     * This method allows you to make multiple recv() calls using only one
-     * system call.
-     *
-     * @return  Number of bytes received.
-     *
-     *=========================================================================*/
+   /**=========================================================================
+    * @brief Call recvmsg (scatter-gather reads)
+    *
+    * @param   buffers Vector of tupples consisting of a memory address and the
+    * requested amount of data to receive.
+    * @param   addr    Address to receive data from. This field is ignored when
+    * using a connected (TCP) socket and required when using an unconnected (UDP)
+    * socket.
+    * @param   flags   Optional recv() flags.
+    *
+    * This method allows you to make multiple recv() calls using only one
+    * system call.
+    *
+    * @return  Number of bytes received.
+    *
+    *=========================================================================*/
     int recvmsg( const std::vector<iovec> &buffers,
             const Socket::Address *addr = NULL, int flags = 0 );
 
-    /**=========================================================================
-     * @brief Call sendmsg (scatter-gather writes)
-     *
-     * @param   buffers Vector of tupples consisting a memory address and the
-     * requested amount of data to send.
-     * @param   addr    Address to send data to. This field is ignored when
-     * using a connected (TCP) socket, and required when using an unconnected
-     * (UDP) socket.
-     * @param   flags   Optional send() flags.
-     *
-     * This method allows to make multiple send() calls using only one system
-     * call.
-     *
-     * @return  Number of bytes sent.
-     *
-     *=========================================================================*/
+   /**=========================================================================
+    * @brief Call sendmsg (scatter-gather writes)
+    *
+    * @param   buffers Vector of tupples consisting a memory address and the
+    * requested amount of data to send.
+    * @param   addr    Address to send data to. This field is ignored when
+    * using a connected (TCP) socket, and required when using an unconnected
+    * (UDP) socket.
+    * @param   flags   Optional send() flags.
+    *
+    * This method allows to make multiple send() calls using only one system
+    * call.
+    *
+    * @return  Number of bytes sent.
+    *
+    *=========================================================================*/
     int sendmsg( const std::vector<iovec> &buffer, const Socket::Address *addr =
             NULL, int flags = 0 );
 
-    /**=========================================================================
-     * @brief Close the socket.
-     *
-     *=========================================================================*/
+   /**=========================================================================
+    * @brief Close the socket.
+    *
+    *=========================================================================*/
     int close();
 
     /**=========================================================================
@@ -431,23 +431,23 @@ public:
      *=========================================================================*/
     int shutdown();
 
-    /**=========================================================================
-     * @brief Get bytes available from the socket.
-     *
-     * @return  Number of bytes available on the socket or -1 on error.
-     *=========================================================================*/
+   /**=========================================================================
+    * @brief Get bytes available from the socket.
+    *
+    * @return  Number of bytes available on the socket or -1 on error.
+    *=========================================================================*/
     virtual int getBytesAvailable();
 
-    /**=========================================================================
-     * @brief Get the address of the remote side of this socket.
-     *
-     *=========================================================================*/
+   /**=========================================================================
+    * @brief Get the address of the remote side of this socket.
+    *
+    *=========================================================================*/
     int getRemoteAddress( Socket::Address &addr );
 
-    /**=========================================================================
-     * @brief Get the address of this side of this socket.
-     *
-     *=========================================================================*/
+   /**=========================================================================
+    * @brief Get the address of this side of this socket.
+    *
+    *=========================================================================*/
     int getLocalAddress( Socket::Address &addr );
 
    /**=========================================================================
@@ -548,8 +548,8 @@ public:
     * @brief Get the ARP entry for a specified MAC address.
     *
     *=========================================================================*/
-   bool getArpEntry( const char *if_name, Socket::Address &addr,
-         Socket::SocketAddress &addr );
+   bool getArpEntry( const char *if_name, Socket::Address &sAddr,
+         Socket::SocketAddress &saddr );
 
 protected:
    /**=========================================================================
