@@ -18,7 +18,9 @@ Socket.cpp \
 ErrCode.cpp \
 FdReaderWriter.cpp \
 CircularBuffer.cpp \
-HttpHeaderBase.cpp
+HttpHeaderBase.cpp \
+File.cpp \
+URI.cpp \
 
 SRCS_libcommon = $(COMMON_SRCS)
 

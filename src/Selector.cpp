@@ -204,7 +204,8 @@ void Selector::threadMain()
                LOG( "got %x on pipe %d", fds[ 0 ].revents, fds[ i ].fd );
                if ( fds[ i ].revents & POLLIN ) {
                   char buf[ 10 ];
-                  read( mPipe[PIPE_READER], buf, 4 );
+                  if ( read( mPipe[PIPE_READER], buf, 4 ) ) {
+                  }
 
                   // We need to handle events after we handle file
                   // descriptor polls because one of the events
