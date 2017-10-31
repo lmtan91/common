@@ -6,7 +6,8 @@ DIR := common/include
 TARGET_PROGS = conditionTest threadTest eventAgentTest eventThreadTest listTest \
 		timerUnitTest selectorTest \
 	socketTest \
-circularBufferTest
+circularBufferTest \
+URITest \
 
 INCDIRS_$(DIR) := $(TOPSRCDIR)/$(DIR) $(TOPSRCDIR)/$(DIR)/pubinc
 
@@ -14,6 +15,9 @@ INCDIRS_$(DIR) := $(TOPSRCDIR)/$(DIR) $(TOPSRCDIR)/$(DIR)/pubinc
 $(DIR)_THREAD_TEST_SRCS = threadTest.cpp
 $(DIR)_APPSTARTER = appstarter.cpp
 $(DIR)_SERVERTEST = servertest.cpp
+
+SRCS_URITest := URITest.cpp
+LDFLAGS_URITest = -lcommon
 
 SRCS_circularBufferTest := circularBufferTest.cpp
 LDFLAGS_circularBufferTest = -lcommon
