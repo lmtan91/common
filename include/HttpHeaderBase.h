@@ -20,6 +20,7 @@
  *****************************************************************************/
 #include <list>
 
+#include "URI.h"
 #include "ErrCode.h"
 #include "Socket.h"
 #include "FieldMap.h"
