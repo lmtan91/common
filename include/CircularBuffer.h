@@ -84,13 +84,97 @@ public:
    int fillFromFile( int fd, int size );
 
    /**=========================================================================
+    * Read data from a IReaderWriter into the CircularBuffer.  This will not
+    *  overflow the CircularBuffer.
+    *=========================================================================*/
+   int fillFromFile( IReaderWriter *reader, int size );
+
+   /**=========================================================================
+    * Drop all data from the buffer.
+    *=========================================================================*/
+   void clear();
+
+   /**=========================================================================
+    * Wait for a specified amount of data to arrive into the buffer.  Will
+    *  timeout after a specified time.  Time may be set to -1 to wait forever.
+    *=========================================================================*/
+   int waitForData( int threshold, uint32_t msecs );
+
+   /**=========================================================================
+    * Wait for a specificed amount of free space in the buffer.  Will timeout
+    *  after a specified time.  Time may be set to 0 to wait forever.
+    *=========================================================================*/
+   int waitForFreeSpace( int threshold, uint32_t msecs );
+
+   /**=========================================================================
+    * Get the byte at a specified offset into the buffer.
+    *=========================================================================*/
+   int byteAt( int i ) const;
+
+   /**=========================================================================
+    * Get a pointer to the data at an offset into the buffer.  Upon returning
+    *  you will be told how many bytes following this ptr are valid.  Due to
+    *  buffer wrapping this may be less that the length of the remaining data
+    *  in the buffer.
+    *=========================================================================*/
+   const uint8_t *getBytes( int i, int &size ) const;
+
+   /**=========================================================================
+    * Write a byte to the end of the buffer.
+    *=========================================================================*/
+   int writeByte( uint8_t byte );
+
+
+   /**=========================================================================
     * Get the amount of free space in the buffer.
     *=========================================================================*/
    int getFreeSpace() const;
 
+   /**=========================================================================
+    * Get the amount of data in the buffer.
+    *=========================================================================*/
+   int getLength() const;
+
+   /**=========================================================================
+    * Get the total size of the buffer.
+    *=========================================================================*/
+   int getSize() const;
+
+   /**=========================================================================
+    * Lock the buffer from beign modified.  Needed when the buffer is used in
+    *  multiple threads.
+    *=========================================================================*/
+   void Lock() {
+      mLock.Lock();
+   }
+
+   /**=========================================================================
+    * Unlock the buffer from beign modified.  Needed when the buffer
+    * is used in multiple threads.
+    *=========================================================================*/
+   void Unlock() {
+      mLock.Unlock();
+   }
+
 protected:
+   //! Error-checked memcpy
+   void bufferCopy( uint8_t *dest, const uint8_t *src, int size );
+
+   /**=========================================================================
+    * Return a pointer to the i'th byte, or null.  Set size to the
+    * number of bytes available from that point in the buffer.
+    * (Which might be the wrap point, or the total number of bytes.)
+    *=========================================================================*/
+   const uint8_t *getBytesInternal( int i, int &size ) const;
+
    //! How many bytes are available?
    int length_internal() const;
+
+   //! Add to the internal length, checking bounds.
+   void add_length_internal( unsigned int size );
+
+   //! Subtract from internal length, checking bounds.
+   void subtract_length_internal( unsigned int size );
 
    //! Write some bytes into the buffer
    int write_internal( const uint8_t *buffer, int size );

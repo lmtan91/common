@@ -15,7 +15,9 @@ endif
 COMMON_SRCS = Thread.cpp Mutex.cpp Condition.cpp EventQueue.cpp Timer.cpp EventDispatcher.cpp EventThread.cpp \
 				Selector.cpp logging.cpp logging_syslog.cpp \
 Socket.cpp \
-ErrCode.cpp
+ErrCode.cpp \
+FdReaderWriter.cpp \
+CircularBuffer.cpp
 
 SRCS_libcommon = $(COMMON_SRCS)
 
