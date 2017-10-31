@@ -17,7 +17,8 @@ COMMON_SRCS = Thread.cpp Mutex.cpp Condition.cpp EventQueue.cpp Timer.cpp EventD
 Socket.cpp \
 ErrCode.cpp \
 FdReaderWriter.cpp \
-CircularBuffer.cpp
+CircularBuffer.cpp \
+HttpHeaderBase.cpp
 
 SRCS_libcommon = $(COMMON_SRCS)
 

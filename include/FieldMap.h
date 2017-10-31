@@ -62,7 +62,7 @@ public:
    static const int kHttpFieldMapStart = 300;
 
    virtual FieldType getFieldType( const char *field ) const=0;
-   virtual const char *getFieldString( FieldType type ) const =0;
+   virtual const char *getFieldTypeString( FieldType type ) const =0;
 };
 
 #endif /* ifndef INCLUDE_FIELDMAP_H_ */

@@ -25,6 +25,7 @@
  * 
  * 
  *============================================================================*/
+class IReaderWriter;
 class CircularBuffer {
 
 public:

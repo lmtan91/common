@@ -491,12 +491,14 @@ int CircularBuffer::write_internal( const uint8_t *buffer, int size ) {
 
    // limit size to free space, we will return this for the size of
    // this write
-   if ( size > getFreeSpace() )
+   if ( size > getFreeSpace() ) {
       size = getFreeSpace();
+   }
 
    // if size is zero, return early
-   if ( size == 0 )
+   if ( size == 0 ) {
       return 0;
+   }
 
    // first, copy from the write pointer up to the end of the buffer,
    // note that this truncates implicitly to no more than free space
@@ -504,8 +506,9 @@ int CircularBuffer::write_internal( const uint8_t *buffer, int size ) {
 
    // truncate tail_size to the requested write size, note that size
    // has already been truncated to no more than free space
-   if ( tail_size > size )
+   if ( tail_size > size ) {
       tail_size = size;
+   }
 
    bufferCopy( mWritePtr, buffer, tail_size );
    mWritePtr += tail_size;

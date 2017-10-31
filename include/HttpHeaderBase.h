@@ -23,6 +23,8 @@
 #include "ErrCode.h"
 #include "Socket.h"
 #include "FieldMap.h"
+#include "CircularBuffer.h"
+
 /**============================================================================
  * @brief Base class for HTTP-style header generation/parsing
  *
